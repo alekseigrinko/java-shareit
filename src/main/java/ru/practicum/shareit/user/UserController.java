@@ -1,8 +1,12 @@
 package ru.practicum.shareit.user;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
+
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * // TODO .
@@ -10,19 +14,38 @@ import ru.practicum.shareit.user.model.User;
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
+
+    UserService userService;
+
+    public UserController(@Qualifier("UserServiceImp") UserService userService) {
+        this.userService = userService;
+    }
+
     @PostMapping
-    User createUser(@RequestHeader("X-Later-User-Id")
-                       @Validated({Create.class}) @RequestBody User user) {
-        return user;
+    UserDto createUser(@Valid
+                                                     @RequestBody UserDto userDto) {
+        return userService.addUser(userDto);
     }
 
-    @PutMapping
-    User updateUser(@Validated ({Update.class})@RequestBody User user) {
-        return user;
+    @PatchMapping("/{userId}")
+    UserDto updateUser(@Validated({Create.class})
+                                                      @PathVariable long userId,
+                                                      @RequestBody UserDto userDto) {
+        return userService.updateUser(userId, userDto);
     }
 
-    @DeleteMapping
-    String deleteUser(@RequestBody User user) {
-        return " ";
+    @GetMapping
+    List<UserDto> getAllUsers(){
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/{userId}")
+    UserDto getUser(@PathVariable long userId){
+        return userService.getUser(userId);
+    }
+
+    @DeleteMapping("/{userId}")
+    String deleteUser(@PathVariable long userId) {
+        return userService.deleteUser(userId);
     }
 }

@@ -14,12 +14,11 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class ItemDto {
     private Long id;
-    @NotBlank
+    @NotBlank(message = "Некорректно имя объекта")
     private String name;
-    @NotBlank
+    @NotBlank(message = "Некорректное описание объекта")
     private String description;
-    @NotNull
+    @NotNull(message = "Статус не может быть пустым")
     private Boolean available;
-    @NotNull
     private Long owner;
 }

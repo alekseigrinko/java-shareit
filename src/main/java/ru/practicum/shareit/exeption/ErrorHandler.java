@@ -16,21 +16,13 @@ public class ErrorHandler {
         );
     }
 
-    /*@ExceptionHandler(ObjectNotFoundException.class)
+    @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundObject(final RuntimeException e) {
         return new ErrorResponse(
                 e.getMessage()
         );
     }
-
-    @ExceptionHandler(ErrorException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleError(final RuntimeException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }*/
 
     public class ErrorResponse {
 
@@ -40,8 +32,5 @@ public class ErrorHandler {
             this.error = error;
         }
 
-/*        public String getError() {
-            return error;
-        }*/
     }
 }

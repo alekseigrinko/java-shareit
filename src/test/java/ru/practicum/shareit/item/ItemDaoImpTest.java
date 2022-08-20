@@ -54,7 +54,7 @@ class ItemDaoImpTest {
     }
 
     @Test
-    void addItemByNotRegisterUser(){
+    void addItemByNotRegisterUser() {
         final ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
             ItemDto itemDto2 = new ItemDto(
                     null, "item2", "description2", true, null

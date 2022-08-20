@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import java.util.List;
 
 @Service("UserServiceImp")
-public class UserServiceImp implements UserService{
+public class UserServiceImp implements UserService {
 
     UserDao userDao;
 
@@ -16,27 +16,27 @@ public class UserServiceImp implements UserService{
     }
 
     @Override
-    public UserDto addUser (UserDto userDto) {
+    public UserDto addUser(UserDto userDto) {
         return userDao.addUser(userDto);
     }
 
     @Override
-    public UserDto updateUser (long userId, UserDto userDto) {
+    public UserDto updateUser(long userId, UserDto userDto) {
         return userDao.updateUser(userId, userDto);
     }
 
     @Override
-    public List<UserDto> getAllUsers(){
+    public List<UserDto> getAllUsers() {
         return userDao.getAllUsers();
     }
 
     @Override
-    public UserDto getUser (long userId) {
+    public UserDto getUser(long userId) {
         return userDao.getUser(userId);
     }
 
     @Override
-    public String deleteUser (long userId) {
+    public String deleteUser(long userId) {
         return userDao.deleteUser(userId);
     }
 }

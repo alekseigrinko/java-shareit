@@ -90,7 +90,7 @@ public class ItemDaoImp implements ItemDao {
 
     @Override
     public List<ItemDto> searchItems(String text) {
-        if (text.isBlank()){
+        if (text.isBlank()) {
             log.debug("Условие поиска не задано");
             return new ArrayList<>();
         }

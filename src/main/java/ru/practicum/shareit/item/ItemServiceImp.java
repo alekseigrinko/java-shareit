@@ -21,27 +21,27 @@ public class ItemServiceImp implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem (long itemId, long userId, ItemDto itemDto){
+    public ItemDto updateItem(long itemId, long userId, ItemDto itemDto) {
         return itemDao.updateItem(itemId, userId, itemDto);
     }
 
     @Override
-    public String deleteItem(long itemId, long userId){
+    public String deleteItem(long itemId, long userId) {
         return itemDao.deleteItem(itemId, userId);
     }
 
     @Override
-    public ItemDto getItem(long itemId){
+    public ItemDto getItem(long itemId) {
         return itemDao.getItem(itemId);
     }
 
     @Override
-    public List<ItemDto> getItemsOwner(long userId){
+    public List<ItemDto> getItemsOwner(long userId) {
         return itemDao.getItemsOwner(userId);
     }
 
     @Override
-    public List<ItemDto> searchItems(String text){
+    public List<ItemDto> searchItems(String text) {
         return itemDao.searchItems(text);
     }
 }

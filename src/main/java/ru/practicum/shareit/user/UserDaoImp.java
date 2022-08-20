@@ -28,6 +28,10 @@ public class UserDaoImp implements UserDao {
     @Override
     public UserDto addUser(UserDto userDto) {
         User user = userMapper.toUser(userDto);
+       /* if (userDto.getEmail() == null) {
+            log.debug("Email не может быть пустой");
+            throw new ValidationException("Email не может быть пустой");
+        }*/
         checkUserEmail(user);
         user.setId(createId());
         userMap.put(user.getId(), user);
@@ -64,7 +68,7 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public UserDto getUser(long userId){
+    public UserDto getUser(long userId) {
         checkUser(userId);
         log.debug("Предоставлены данные пользователя ID: " + userId);
         return userMapper.toUserDto(userMap.get(userId));

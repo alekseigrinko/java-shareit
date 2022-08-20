@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface ItemService {
 
-    ItemDto addItem (long userId, ItemDto itemDto);
+    ItemDto addItem(long userId, ItemDto itemDto);
 
-    ItemDto updateItem (long itemId, long userId, ItemDto itemDto);
+    ItemDto updateItem(long itemId, long userId, ItemDto itemDto);
 
     String deleteItem(long itemId, long userId);
 

@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.shareit.user.Create;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -14,9 +16,9 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class UserDto {
     private Long id;
-    @NotBlank(message = "Некорректное имя пользователя")
+    @NotBlank(groups = {Create.class}, message = "Некорректное имя пользователя")
     private String name;
-    @Email(message = "Некорректный Email")
-    @NotBlank(message = "Необходимо заполнить Email")
+    @Email(groups = {Create.class}, message = "Некорректный Email")
+    @NotNull(groups = {Create.class})
     private String email;
 }

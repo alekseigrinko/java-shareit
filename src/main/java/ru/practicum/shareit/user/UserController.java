@@ -22,25 +22,23 @@ public class UserController {
     }
 
     @PostMapping
-    UserDto createUser(@Valid
-                                                     @RequestBody UserDto userDto) {
+    UserDto createUser(@Validated({Create.class}) @RequestBody UserDto userDto) {
         return userService.addUser(userDto);
     }
 
     @PatchMapping("/{userId}")
-    UserDto updateUser(@Validated({Create.class})
-                                                      @PathVariable long userId,
-                                                      @RequestBody UserDto userDto) {
+    UserDto updateUser(@Valid @RequestBody UserDto userDto,
+                       @PathVariable long userId) {
         return userService.updateUser(userId, userDto);
     }
 
     @GetMapping
-    List<UserDto> getAllUsers(){
+    List<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @GetMapping("/{userId}")
-    UserDto getUser(@PathVariable long userId){
+    UserDto getUser(@PathVariable long userId) {
         return userService.getUser(userId);
     }
 

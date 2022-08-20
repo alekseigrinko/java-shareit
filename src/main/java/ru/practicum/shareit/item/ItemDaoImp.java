@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
+import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserDao;
@@ -10,6 +11,7 @@ import ru.practicum.shareit.user.UserDao;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 @Repository("ItemDaoImp")
 @Slf4j
@@ -43,8 +45,16 @@ public class ItemDaoImp implements ItemDao {
     public ItemDto updateItem(long itemId, long userId, ItemDto itemDto) {
         checkItem(itemId);
         checkItemByUser(itemId, userId);
-        Item item = itemMapper.toItem(itemDto);
-        item.setId(itemId);
+        Item item = itemMap.get(itemId);
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
+        }
+        if (itemDto.getAvailable() != null) {
+            item.setAvailable(itemDto.getAvailable());
+        }
         itemMap.put(item.getId(), item);
         log.debug("Обновлен объект :" + item);
         return itemMapper.toItemDto(item);
@@ -80,9 +90,14 @@ public class ItemDaoImp implements ItemDao {
 
     @Override
     public List<ItemDto> searchItems(String text) {
+        if (text.isBlank()){
+            log.debug("Условие поиска не задано");
+            return new ArrayList<>();
+        }
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item item : itemMap.values()) {
-            if (item.getName().contains(text) || item.getDescription().contains(text)) {
+            if ((item.getAvailable()) && ((item.getName().toLowerCase(Locale.ROOT).contains(text))
+                    || item.getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)))) {
                 itemDtoList.add(itemMapper.toItemDto(item));
             }
         }

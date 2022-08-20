@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.*;
+import ru.practicum.shareit.item.Create;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,11 +15,11 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class ItemDto {
     private Long id;
-    @NotBlank(message = "Некорректно имя объекта")
+    @NotBlank(groups = {Create.class}, message = "Некорректно имя объекта")
     private String name;
-    @NotBlank(message = "Некорректное описание объекта")
+    @NotBlank(groups = {Create.class}, message = "Некорректное описание объекта")
     private String description;
-    @NotNull(message = "Статус не может быть пустым")
+    @NotNull(groups = {Create.class}, message = "Статус не может быть пустым")
     private Boolean available;
     private Long owner;
 }

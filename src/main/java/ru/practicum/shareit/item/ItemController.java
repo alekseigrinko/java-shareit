@@ -18,7 +18,6 @@ public class ItemController {
 
     ItemService itemService;
 
-    @Autowired
     public ItemController(@Qualifier("ItemServiceImp") ItemService itemService) {
         this.itemService = itemService;
     }

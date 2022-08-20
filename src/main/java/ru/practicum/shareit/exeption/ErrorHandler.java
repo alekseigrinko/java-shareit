@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorHandler {
 
     @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleAuthorized(final RuntimeException e) {
         return new ErrorResponse(
                 e.getMessage()
@@ -32,5 +32,8 @@ public class ErrorHandler {
             this.error = error;
         }
 
+        public String getError() {
+            return error;
+        }
     }
 }

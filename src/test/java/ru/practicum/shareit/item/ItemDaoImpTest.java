@@ -3,9 +3,12 @@ package ru.practicum.shareit.item;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.exeption.ObjectNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserDaoImp;
 import ru.practicum.shareit.user.dto.UserDto;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ItemDaoImpTest {
     private static UserDaoImp userDaoImp = new UserDaoImp();
@@ -48,5 +51,16 @@ class ItemDaoImpTest {
     void deleteItem() {
         itemDaoImp.deleteItem(1L, 1L);
         Assertions.assertEquals(itemDaoImp.getItemsOwner(1L).size(), 0);
+    }
+
+    @Test
+    void addItemByNotRegisterUser(){
+        final ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
+            ItemDto itemDto2 = new ItemDto(
+                    null, "item2", "description2", true, null
+            );
+            itemDaoImp.addItem(4L, itemDto2);
+        });
+        Assertions.assertEquals("Пользователя с ID 4 не найдено!", thrown.getMessage());
     }
 }

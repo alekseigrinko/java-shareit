@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
-import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserDao;
@@ -21,7 +21,7 @@ public class ItemDaoImp implements ItemDao {
     private ItemMapper itemMapper = new ItemMapper();
     private UserDao userDao;
 
-    public ItemDaoImp(UserDao userDao) {
+    public ItemDaoImp(@Qualifier("UserDaoImp")UserDao userDao) {
         this.userDao = userDao;
     }
 

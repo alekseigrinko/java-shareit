@@ -1,9 +1,10 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
+import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -17,15 +18,10 @@ public class UserDaoImp implements UserDao {
     private HashMap<Long, User> userMap = new HashMap<>();
     private Long id = 0L;
 
-    private Long createId() {
-        id++; //если убрать в return не сохраняется в памяти сложение
-        return id;
-    }
-
     @Override
     public User addUser(User user) {
         checkUserEmail(user);
-        user.setId(createId());
+        user.setId(++id);
         userMap.put(user.getId(), user);
         log.debug("Зарегистрирован пользователь: " + user);
         return user;
@@ -52,9 +48,7 @@ public class UserDaoImp implements UserDao {
     @Override
     public List<User> getAllUsers() {
         List<User> allUsersList = new ArrayList<>();
-        for (User user: userMap.values()) {
-            allUsersList.add(user);
-        }
+        allUsersList.addAll(userMap.values());
         log.debug("Получен список всех пользователей");
         return allUsersList;
     }

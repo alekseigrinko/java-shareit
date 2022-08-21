@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
+import ru.practicum.shareit.item.dao.ItemDaoImp;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserDaoImp;
+import ru.practicum.shareit.user.dao.UserDaoImp;
 import ru.practicum.shareit.user.model.User;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

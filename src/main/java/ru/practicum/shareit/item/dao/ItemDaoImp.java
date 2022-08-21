@@ -1,10 +1,10 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserDao;
+import ru.practicum.shareit.user.dao.UserDao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,16 +22,11 @@ public class ItemDaoImp implements ItemDao {
         this.userDao = userDao;
     }
 
-    private Long createId() {
-        id++; //если убрать в return не сохраняется в памяти сложение
-        return id;
-    }
-
     @Override
     public Item addItem(long userId, Item item) {
         userDao.checkUser(userId);
         item.setOwner(userId);
-        item.setId(createId());
+        item.setId(++id);
         itemMap.put(item.getId(), item);
         log.debug("Добавлен объект :" + item);
         return item;

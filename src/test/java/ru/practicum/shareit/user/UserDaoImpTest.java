@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.user.dao.UserDaoImp;
 import ru.practicum.shareit.user.model.User;
 
 class UserDaoImpTest {

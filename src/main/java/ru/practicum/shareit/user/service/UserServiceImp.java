@@ -1,6 +1,8 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
 
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.user.dao.UserDao;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
@@ -12,7 +14,7 @@ import static ru.practicum.shareit.user.UserMapper.toUserDto;
 @Service
 public class UserServiceImp implements UserService {
 
-    UserDao userDao;
+    private UserDao userDao;
 
     public UserServiceImp(UserDao userDao) {
         this.userDao = userDao;

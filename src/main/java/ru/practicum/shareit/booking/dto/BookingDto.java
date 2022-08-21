@@ -8,10 +8,6 @@ import ru.practicum.shareit.booking.Status;
 
 import java.time.LocalDateTime;
 
-/**
- * // TODO .
- */
-
 @Getter
 @Setter
 @AllArgsConstructor

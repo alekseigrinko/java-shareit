@@ -4,28 +4,28 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserDaoImp;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ItemDaoImpTest {
     private static UserDaoImp userDaoImp = new UserDaoImp();
-    private static UserDto userDto;
+    private static User user;
     private static ItemDaoImp itemDaoImp = new ItemDaoImp(userDaoImp);
-    private static ItemDto itemDto;
+    private static Item item;
 
     @BeforeAll
     private static void setup() {
-        userDto = new UserDto(
+        user = new User(
                 null, "name", "user@user.com"
         );
-        userDaoImp.addUser(userDto);
-        itemDto = new ItemDto(
+        userDaoImp.addUser(user);
+        item = new Item(
           null, "item", "description", true, null
         );
-        itemDaoImp.addItem(1L, itemDto);
+        itemDaoImp.addItem(1L, item);
     }
 
     @Test
@@ -35,10 +35,10 @@ class ItemDaoImpTest {
 
     @Test
     void updateItem() {
-        ItemDto itemDto2 = new ItemDto(
+        Item item2 = new Item(
                 null, null, null, false, null
         );
-        itemDaoImp.updateItem(1L,1L, itemDto2);
+        itemDaoImp.updateItem(1L,1L, item2);
         Assertions.assertFalse(itemDaoImp.getItemsOwner(1).get(0).getAvailable());
     }
 
@@ -56,10 +56,10 @@ class ItemDaoImpTest {
     @Test
     void addItemByNotRegisterUser() {
         final ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
-            ItemDto itemDto2 = new ItemDto(
+            Item item2 = new Item(
                     null, "item2", "description2", true, null
             );
-            itemDaoImp.addItem(4L, itemDto2);
+            itemDaoImp.addItem(4L, item2);
         });
         Assertions.assertEquals("Пользователя с ID 4 не найдено!", thrown.getMessage());
     }

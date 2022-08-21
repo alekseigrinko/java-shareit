@@ -1,10 +1,8 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserDao;
 
@@ -13,51 +11,49 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-@Repository("ItemDaoImp")
+@Repository
 @Slf4j
 public class ItemDaoImp implements ItemDao {
     private HashMap<Long, Item> itemMap = new HashMap<>();
     private Long id = 0L;
-    private ItemMapper itemMapper = new ItemMapper();
     private UserDao userDao;
 
-    public ItemDaoImp(@Qualifier("UserDaoImp")UserDao userDao) {
+    public ItemDaoImp(UserDao userDao) {
         this.userDao = userDao;
     }
 
     private Long createId() {
-        id++;
+        id++; //если убрать в return не сохраняется в памяти сложение
         return id;
     }
 
     @Override
-    public ItemDto addItem(long userId, ItemDto itemDto) {
+    public Item addItem(long userId, Item item) {
         userDao.checkUser(userId);
-        Item item = itemMapper.toItem(itemDto);
         item.setOwner(userId);
         item.setId(createId());
         itemMap.put(item.getId(), item);
         log.debug("Добавлен объект :" + item);
-        return itemMapper.toItemDto(item);
+        return item;
     }
 
     @Override
-    public ItemDto updateItem(long itemId, long userId, ItemDto itemDto) {
+    public Item updateItem(long itemId, long userId, Item item) {
         checkItem(itemId);
         checkItemByUser(itemId, userId);
-        Item item = itemMap.get(itemId);
-        if (itemDto.getName() != null) {
-            item.setName(itemDto.getName());
+        Item itemInMemory = itemMap.get(itemId);
+        if (item.getName() != null) {
+            itemInMemory.setName(item.getName());
         }
-        if (itemDto.getDescription() != null) {
-            item.setDescription(itemDto.getDescription());
+        if (item.getDescription() != null) {
+            itemInMemory.setDescription(item.getDescription());
         }
-        if (itemDto.getAvailable() != null) {
-            item.setAvailable(itemDto.getAvailable());
+        if (item.getAvailable() != null) {
+            itemInMemory.setAvailable(item.getAvailable());
         }
-        itemMap.put(item.getId(), item);
+        itemMap.put(itemInMemory.getId(), itemInMemory);
         log.debug("Обновлен объект :" + item);
-        return itemMapper.toItemDto(item);
+        return itemInMemory;
     }
 
     @Override
@@ -70,39 +66,39 @@ public class ItemDaoImp implements ItemDao {
     }
 
     @Override
-    public ItemDto getItem(long itemId) {
+    public Item getItem(long itemId) {
         checkItem(itemId);
         log.warn("предоставлена информация по объекту ID: " + itemId);
-        return itemMapper.toItemDto(itemMap.get(itemId));
+        return itemMap.get(itemId);
     }
 
     @Override
-    public List<ItemDto> getItemsOwner(long userId) {
-        List<ItemDto> itemDtoList = new ArrayList<>();
+    public List<Item> getItemsOwner(long userId) {
+        List<Item> itemList = new ArrayList<>();
         for (Item item : itemMap.values()) {
             if (item.getOwner() == userId) {
-                itemDtoList.add(itemMapper.toItemDto(item));
+                itemList.add(item);
             }
         }
         log.warn("Выведен список объектов пользователя ID: " + userId);
-        return itemDtoList;
+        return itemList;
     }
 
     @Override
-    public List<ItemDto> searchItems(String text) {
+    public List<Item> searchItems(String text) {
         if (text.isBlank()) {
             log.debug("Условие поиска не задано");
             return new ArrayList<>();
         }
-        List<ItemDto> itemDtoList = new ArrayList<>();
+        List<Item> itemList = new ArrayList<>();
         for (Item item : itemMap.values()) {
             if ((item.getAvailable()) && ((item.getName().toLowerCase(Locale.ROOT).contains(text))
                     || item.getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)))) {
-                itemDtoList.add(itemMapper.toItemDto(item));
+                itemList.add(item);
             }
         }
         log.warn("Выведен список объектов согласно условию поиска: " + text);
-        return itemDtoList;
+        return itemList;
     }
 
     private void checkItem(long itemId) {

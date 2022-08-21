@@ -1,28 +1,31 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Service("ItemServiceImp")
+import static ru.practicum.shareit.item.ItemMapper.toItem;
+import static ru.practicum.shareit.item.ItemMapper.toItemDto;
+
+@Service
 public class ItemServiceImp implements ItemService {
 
     ItemDao itemDao;
 
-    public ItemServiceImp(@Qualifier("ItemDaoImp") ItemDao itemDao) {
+    public ItemServiceImp(ItemDao itemDao) {
         this.itemDao = itemDao;
     }
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
-        return itemDao.addItem(userId, itemDto);
+        return toItemDto(itemDao.addItem(userId, toItem(itemDto)));
     }
 
     @Override
     public ItemDto updateItem(long itemId, long userId, ItemDto itemDto) {
-        return itemDao.updateItem(itemId, userId, itemDto);
+        return toItemDto(itemDao.updateItem(itemId, userId, toItem(itemDto)));
     }
 
     @Override
@@ -32,16 +35,20 @@ public class ItemServiceImp implements ItemService {
 
     @Override
     public ItemDto getItem(long itemId) {
-        return itemDao.getItem(itemId);
+        return toItemDto(itemDao.getItem(itemId));
     }
 
     @Override
     public List<ItemDto> getItemsOwner(long userId) {
-        return itemDao.getItemsOwner(userId);
+        return itemDao.getItemsOwner(userId).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ItemDto> searchItems(String text) {
-        return itemDao.searchItems(text);
+        return itemDao.searchItems(text).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 }

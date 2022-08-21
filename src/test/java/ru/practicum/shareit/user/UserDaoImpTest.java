@@ -3,19 +3,19 @@ package ru.practicum.shareit.user;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 class UserDaoImpTest {
 
     private static UserDaoImp userDaoImp = new UserDaoImp();
-    private static UserDto userDto;
+    private static User user;
 
     @BeforeAll
     private static void setup() {
-        userDto = new UserDto(
+        user = new User(
           null, "name", "user@user.com"
         );
-        userDaoImp.addUser(userDto);
+        userDaoImp.addUser(user);
     }
 
     @Test
@@ -25,10 +25,10 @@ class UserDaoImpTest {
 
     @Test
     void updateUser() {
-        UserDto userDto2 = new UserDto(
+        User user2 = new User(
                 null, "name2", null
         );
-        userDaoImp.updateUser(1L,userDto2);
+        userDaoImp.updateUser(1L,user2);
         Assertions.assertEquals(userDaoImp.getUser(1).getName(), "name2");
     }
 

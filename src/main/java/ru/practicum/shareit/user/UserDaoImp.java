@@ -4,14 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Repository("UserDaoImp")
+@Repository
 @Slf4j
 public class UserDaoImp implements UserDao {
 
@@ -19,59 +18,54 @@ public class UserDaoImp implements UserDao {
     private Long id = 0L;
 
     private Long createId() {
-        id++;
+        id++; //если убрать в return не сохраняется в памяти сложение
         return id;
     }
 
     private UserMapper userMapper = new UserMapper();
 
     @Override
-    public UserDto addUser(UserDto userDto) {
-        User user = userMapper.toUser(userDto);
-       /* if (userDto.getEmail() == null) {
-            log.debug("Email не может быть пустой");
-            throw new ValidationException("Email не может быть пустой");
-        }*/
+    public User addUser(User user) {
         checkUserEmail(user);
         user.setId(createId());
         userMap.put(user.getId(), user);
         log.debug("Зарегистрирован пользователь: " + user);
-        return userMapper.toUserDto(user);
+        return user;
     }
 
     @Override
-    public UserDto updateUser(Long userId, UserDto userDto) {
+    public User updateUser(Long userId, User user) {
         checkUser(userId);
-        User user = userMap.get(userId);
-        if (userDto.getName() != null) {
-            user.setName(userDto.getName());
+        User userInMemory = userMap.get(userId);
+        if (user.getName() != null) {
+            userInMemory.setName(user.getName());
         }
-        if (userDto.getEmail() != null) {
-            checkUserEmail(userMapper.toUser(userDto));
-            user.setEmail(userDto.getEmail());
+        if (user.getEmail() != null) {
+            checkUserEmail(user);
+            userInMemory.setEmail(user.getEmail());
         }
-        user.setId(userId);
+        userInMemory.setId(userId);
         userMap.remove(userId);
-        userMap.put(user.getId(), user);
+        userMap.put(userInMemory.getId(), userInMemory);
         log.debug("Данные пользователя обновлены: " + user);
-        return userMapper.toUserDto(user);
+        return userInMemory;
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        List<UserDto> allUsersList = new ArrayList<>();
+    public List<User> getAllUsers() {
+        List<User> allUsersList = new ArrayList<>();
         for (User user: userMap.values()) {
-            allUsersList.add(userMapper.toUserDto(user));
+            allUsersList.add(user);
         }
         log.debug("Получен список всех пользователей");
         return allUsersList;
     }
 
     @Override
-    public UserDto getUser(long userId) {
+    public User getUser(long userId) {
         checkUser(userId);
         log.debug("Предоставлены данные пользователя ID: " + userId);
-        return userMapper.toUserDto(userMap.get(userId));
+        return userMap.get(userId);
     }
 
     @Override

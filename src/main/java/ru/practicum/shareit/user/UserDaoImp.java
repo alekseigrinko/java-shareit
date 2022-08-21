@@ -22,8 +22,6 @@ public class UserDaoImp implements UserDao {
         return id;
     }
 
-    private UserMapper userMapper = new UserMapper();
-
     @Override
     public User addUser(User user) {
         checkUserEmail(user);
@@ -34,7 +32,7 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public User updateUser(Long userId, User user) {
+    public User updateUser(long userId, User user) {
         checkUser(userId);
         User userInMemory = userMap.get(userId);
         if (user.getName() != null) {
@@ -69,7 +67,7 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public String deleteUser(Long userId) {
+    public String deleteUser(long userId) {
         checkUser(userId);
         userMap.remove(userId);
         log.debug("Удален пользователь ID: " + userId);
@@ -77,7 +75,7 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public void checkUser(Long userId) {
+    public void checkUser(long userId) {
         if (!userMap.containsKey(userId)) {
             log.warn("Пользователя с ID " + userId + " не найдено!");
             throw new ObjectNotFoundException("Пользователя с ID " + userId + " не найдено!");

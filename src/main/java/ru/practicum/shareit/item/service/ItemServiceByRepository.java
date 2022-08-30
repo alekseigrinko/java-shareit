@@ -13,7 +13,7 @@ import static ru.practicum.shareit.item.ItemMapper.toItemDto;
 
 @Slf4j
 @Service("ItemServiceByRepository")
-public class ItemServiceByRepository implements ItemService{
+public class ItemServiceByRepository implements ItemService {
 
     ItemRepository itemRepository;
 

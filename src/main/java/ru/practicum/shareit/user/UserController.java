@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.Create;
@@ -15,7 +16,7 @@ public class UserController {
 
     UserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(@Qualifier("UserServiceByRepository") UserService userService) {
         this.userService = userService;
     }
 

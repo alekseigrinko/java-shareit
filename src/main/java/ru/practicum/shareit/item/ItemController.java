@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.Create;
@@ -15,7 +16,7 @@ public class ItemController {
 
     final ItemService itemService;
 
-    public ItemController(ItemService itemService) {
+    public ItemController(@Qualifier("ItemServiceByRepository") ItemService itemService) {
         this.itemService = itemService;
     }
 

@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exeption.ObjectNotFoundException;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -17,7 +18,7 @@ import static ru.practicum.shareit.user.UserMapper.toUserDto;
 @Slf4j
 public class UserServiceByRepository implements UserService {
 
-    private UserRepository userRepository;
+    final private UserRepository userRepository;
 
     public UserServiceByRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -30,7 +31,7 @@ public class UserServiceByRepository implements UserService {
 
     @Override
     public UserDto updateUser(long userId, UserDto userDto) {
-        userRepository.existsById(userId);
+        checkUser(userId);
         User userInMemory = userRepository.findById(userId).get();
         if (userDto.getName() != null) {
             userInMemory.setName(userDto.getName());
@@ -38,9 +39,8 @@ public class UserServiceByRepository implements UserService {
         if (userDto.getEmail() != null) {
             userInMemory.setEmail(userDto.getEmail());
         }
-        userInMemory.setId(userId);
         log.debug("Данные пользователя обновлены: " + userInMemory);
-        return toUserDto(userRepository.save(toUser(userDto)));
+        return toUserDto(userRepository.save(userInMemory));
     }
 
     @Override
@@ -52,6 +52,7 @@ public class UserServiceByRepository implements UserService {
 
     @Override
     public UserDto getUser(long userId) {
+        checkUser(userId);
         return toUserDto(userRepository.findById(userId).get());
     }
 
@@ -59,5 +60,12 @@ public class UserServiceByRepository implements UserService {
     public String deleteUser(long userId) {
         userRepository.deleteById(userId);
         return "Пользователь ID" + userId + " удален";
+    }
+
+    public void checkUser(long userId){
+        if(!userRepository.existsById(userId)) {
+            log.warn("Пользователь ID: " + userId + ", не найден!");
+            throw new ObjectNotFoundException("Пользователь ID: " + userId + ", не найден!");
+        }
     }
 }

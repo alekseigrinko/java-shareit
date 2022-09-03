@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,6 +22,8 @@ public class Comment {
     private String text;
     @Column(name = "ITEM_ID")
     private long item;
-    @Column(name = "USER_ID")
+    @Column(name = "AUTHOR_ID")
     private long author;
+    @Column(name = "CREATED")
+    LocalDateTime created;
 }

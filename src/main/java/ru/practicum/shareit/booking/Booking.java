@@ -23,9 +23,9 @@ public class Booking {
     @Column(name = "END_DATE")
     private LocalDateTime end;
     @Column(name = "ITEM_ID")
-    private long item;
+    private long itemId;
     @Column(name = "BOOKER_ID")
-    private long booker;
+    private long bookerId;
     @Enumerated
     @Column(name = "STATUS")
     private Status status;

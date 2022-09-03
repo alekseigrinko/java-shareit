@@ -2,18 +2,28 @@ package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exeption.BadRequestException;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.dto.UserForReturnByBooker;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.item.ItemMapper.toItem;
-import static ru.practicum.shareit.item.ItemMapper.toItemDto;
+import static ru.practicum.shareit.item.mapper.CommentMapper.*;
+import static ru.practicum.shareit.item.mapper.ItemMapper.*;
+import static ru.practicum.shareit.user.UserMapper.toUserDtoForReturnByBooker;
 
 @Slf4j
 @Service("ItemServiceByRepository")
@@ -21,10 +31,15 @@ public class ItemServiceByRepository implements ItemService {
 
     final private ItemRepository itemRepository;
     final private UserRepository userRepository;
+    final private BookingRepository bookingRepository;
+    final private CommentRepository commentRepository;
 
-    public ItemServiceByRepository(ItemRepository itemRepository, UserRepository userRepository) {
+    public ItemServiceByRepository(ItemRepository itemRepository, UserRepository userRepository,
+                                   BookingRepository bookingRepository, CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -61,26 +76,71 @@ public class ItemServiceByRepository implements ItemService {
     }
 
     @Override
-    public ItemDto getItem(long itemId) {
+    public ItemDtoWithComment getItem(long itemId) {
         checkItem(itemId);
         log.warn("предоставлена информация по объекту ID: " + itemId);
-        return toItemDto(itemRepository.findById(itemId).get());
+        List<CommentDtoForReturnItem> commentDtoList = new ArrayList<>();
+        for(Comment comment: commentRepository.findAllByItem(itemId)) {
+            commentDtoList.add(toCommentDtoForReturnItem(comment, userRepository.findById(comment.getAuthor()).get().getName()));
+        }
+        return toItemDtoWithComment(itemRepository.findById(itemId).get(), commentDtoList);
     }
 
     @Override
-    public List<ItemDto> getItemsOwner(long userId) {
+    public List<ItemDtoForReturn> getItemsOwner(long userId) {
         checkUser(userId);
+        List<ItemDtoForReturn> itemList = new ArrayList<>();
+        for (Item item: itemRepository.findAllByOwner(userId)) {
+            /*ItemDtoForReturn.BookingDtoForReturnItem lastBooking;
+            ItemDtoForReturn.BookingDtoForReturnItem nextBooking;
+            List<Booking> bookings = findBookingForItem(item.getId(), userId);
+            if (bookings == null) {
+                itemList.add(toItemDtoForReturn(item, null, null));
+            } else
+            if (bookings.size() == 1) {
+                lastBooking = new ItemDtoForReturn.BookingDtoForReturnItem(bookings.get(0).getId(),
+                        bookings.get(0).getBookerId());
+                itemList.add(toItemDtoForReturn(item, lastBooking, null));
+            } else
+            if (bookings.size() > 1) {
+                lastBooking = new ItemDtoForReturn.BookingDtoForReturnItem(bookings.get(0).getId(),
+                        bookings.get(0).getBookerId());
+                nextBooking = new ItemDtoForReturn.BookingDtoForReturnItem(bookings.get(1).getId(),
+                        bookings.get(1).getBookerId());
+                itemList.add(toItemDtoForReturn(item, lastBooking, nextBooking));}*/
+            itemList.add(updateBookingByItem(item, userId));
+
+        }
         log.warn("Выведен список объектов пользователя ID: " + userId);
-        return itemRepository.findAllByOwner(userId).stream()
-                .map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+        return itemList;
     }
 
     @Override
     public List<ItemDto> searchItems(String text) {
-        return itemRepository.searchItem(text.toLowerCase()).stream()
+        if (text.isBlank()) {
+            log.debug("Условие поиска не задано");
+            return new ArrayList<>();
+        }
+        return itemRepository.searchItem(text).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto addComment(CommentDto commentDto, long userId, long itemId) {
+        if (userId == 0) {
+            log.warn("Некорректный параметр пользователя");
+            throw new BadRequestException("Некорректный параметр пользователя");
+        }
+        checkBookingByUser(itemId, userId);
+        Item item = itemRepository.findById(itemId).get();
+        UserForReturnByBooker user = toUserDtoForReturnByBooker(userRepository.findById(userId).get());
+        UserForReturnByBooker owner = toUserDtoForReturnByBooker(userRepository.findById(item.getOwner()).get());
+        commentDto.setItem(toItemDtoForReturnByBooking(itemRepository.findById(itemId).get(), owner));
+        commentDto.setAuthor(user);
+        commentDto.setCreated(LocalDateTime.now());
+        return toCommentDto(commentRepository.save(toComment(commentDto)),
+                toItemDtoForReturnByBooking(itemRepository.findById(itemId).get(), owner), user);
     }
 
     private void checkItem(long itemId) {
@@ -102,5 +162,38 @@ public class ItemServiceByRepository implements ItemService {
             log.warn("Пользователь ID: " + userId + ", не найден!");
             throw new ObjectNotFoundException("Пользователь ID: " + userId + ", не найден!");
         }
+    }
+
+    private List<Booking> findBookingForItem (long itemId, long userId) {
+        if(bookingRepository.findByItemId(itemId) == null) {
+            log.debug("Бронирование объекта не найдено");
+            return null;
+        }
+        return bookingRepository.getAllBookingByUserCurrentByItem(itemId, userId, LocalDateTime.now());
+    }
+
+    private void checkBookingByUser(long itemId, long userId) {
+        checkItem(itemId);
+        checkUser(userId);
+    }
+
+    private ItemDtoForReturn updateBookingByItem(Item item, long userId) {
+        ItemDtoForReturn.BookingDtoForReturnItem lastBooking;
+        ItemDtoForReturn.BookingDtoForReturnItem nextBooking;
+        List<Booking> bookings = findBookingForItem(item.getId(), userId);
+        if (bookings == null) {
+            return toItemDtoForReturn(item, null, null);
+        } else if (bookings.size() == 1) {
+            lastBooking = new ItemDtoForReturn.BookingDtoForReturnItem(bookings.get(0).getId(),
+                    bookings.get(0).getBookerId());
+            return toItemDtoForReturn(item, lastBooking, null);
+        } else if (bookings.size() > 1) {
+            lastBooking = new ItemDtoForReturn.BookingDtoForReturnItem(bookings.get(0).getId(),
+                    bookings.get(0).getBookerId());
+            nextBooking = new ItemDtoForReturn.BookingDtoForReturnItem(bookings.get(1).getId(),
+                    bookings.get(1).getBookerId());
+            return toItemDtoForReturn(item, lastBooking, nextBooking);
+        }
+        return toItemDtoForReturn(item, null, null);
     }
 }

@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exeption.BadRequestException;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
+import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDtoForReturn;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -19,10 +20,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.BookingMapping.*;
-import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDtoForReturn;
 import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDtoForReturnByBooking;
 import static ru.practicum.shareit.user.UserMapper.toUserDtoForReturnByBooker;
 
@@ -44,6 +43,10 @@ public class BookingServiceByRepository implements BookingService {
     public BookingDtoForReturn addBooking(BookingDto bookingDto, long userId) {
         checkUser(userId);
         checkItem(bookingDto.getItemId());
+        if (itemRepository.findById(bookingDto.getItemId()).get().getOwner() == userId){
+            log.warn("Бронирование не возможно. Вы являетесь владельцем объекта!");
+            throw new ObjectNotFoundException("Бронирование не возможно. Вы являетесь владельцем объекта!");
+        }
         checkData(bookingDto.getStart());
         checkData(bookingDto.getEnd());
         bookingDto.setStatus(Status.WAITING);
@@ -63,6 +66,9 @@ public class BookingServiceByRepository implements BookingService {
         Booking booking = bookingRepository.findById(bookingId).get();
         checkItemByUser(booking.getItemId(), userId);
         if (approved) {
+            if(booking.getStatus() != Status.WAITING) {
+                throw new BadRequestException("Статус уже подтвержден!");
+            }
             booking.setStatus(Status.APPROVED);
         } else {
             booking.setStatus(Status.REJECTED);
@@ -77,8 +83,9 @@ public class BookingServiceByRepository implements BookingService {
 
     @Override
     public BookingDtoForReturn getBooking(long userId, long bookingId) {
-        checkUser(userId);
-        checkBooking(bookingId);
+        /*checkUser(userId);
+        checkBooking(bookingId);*/
+        checkUserForBooking(userId, bookingId);
         Booking booking = bookingRepository.findById(bookingId).get();
         UserForReturnByBooker user = toUserDtoForReturnByBooker(userRepository.findById(itemRepository
                 .findById(booking.getItemId()).get().getOwner()).get());
@@ -194,5 +201,17 @@ public class BookingServiceByRepository implements BookingService {
                     user), booker));
         }
         return bookingDtoList;
+    }
+
+    private void checkUserForBooking(long userId, long bookingId) {
+        checkUser(userId);
+        checkBooking(bookingId);
+        Item item = itemRepository.findById(bookingRepository.findById(bookingId).get().getItemId()).get();
+        if (item.getOwner() != userId) {
+            if (bookingRepository.findById(bookingId).get().getBookerId() != userId) {
+                log.warn("У пользователя недостаточно прав для просмотра бронирования!");
+                throw new BadRequestException("У пользователя недостаточно прав для просмотра бронирования!");
+            }
+        }
     }
 }

@@ -78,6 +78,7 @@ public class ItemServiceByRepository implements ItemService {
     @Override
     public ItemDtoWithComment getItem(long itemId) {
         checkItem(itemId);
+
         log.warn("предоставлена информация по объекту ID: " + itemId);
         List<CommentDtoForReturnItem> commentDtoList = new ArrayList<>();
         for(Comment comment: commentRepository.findAllByItem(itemId)) {

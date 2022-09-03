@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
+import ru.practicum.shareit.booking.dto.BookingDtoForReturnItem;
 import ru.practicum.shareit.item.dto.ItemDtoForReturnByBooking;
 import ru.practicum.shareit.user.dto.UserForReturnByBooker;
 
@@ -17,12 +18,9 @@ public class BookingMapping {
         );
     }
 
-    public static BookingDto toBookingDto (Booking booking){
-        return new BookingDto(
+    public static BookingDtoForReturnItem toBookingDtoForReturnItem (Booking booking){
+        return new BookingDtoForReturnItem(
                 booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getItemId(),
                 booking.getBookerId(),
                 booking.getStatus()
         );

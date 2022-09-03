@@ -83,8 +83,6 @@ public class BookingServiceByRepository implements BookingService {
 
     @Override
     public BookingDtoForReturn getBooking(long userId, long bookingId) {
-        /*checkUser(userId);
-        checkBooking(bookingId);*/
         checkUserForBooking(userId, bookingId);
         Booking booking = bookingRepository.findById(bookingId).get();
         UserForReturnByBooker user = toUserDtoForReturnByBooker(userRepository.findById(itemRepository
@@ -113,10 +111,10 @@ public class BookingServiceByRepository implements BookingService {
                 bookingList = bookingRepository.getAllBookingFuture(bookerId, LocalDateTime.now());
                 break;
             case "WAITING":
-                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.WAITING.toString());
+                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.WAITING);
                 break;
             case "REJECTED":
-                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.REJECTED.toString());
+                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.REJECTED);
                 break;
             default:
                 log.warn("Не корректный параметр поиска");
@@ -144,10 +142,10 @@ public class BookingServiceByRepository implements BookingService {
                 bookingList = bookingRepository.getAllBookingByUserFuture(userId, LocalDateTime.now());
                 break;
             case "WAITING":
-                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.WAITING.toString());
+                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.WAITING);
                 break;
             case "REJECTED":
-                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.REJECTED.toString());
+                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.REJECTED);
                 break;
             default:
                 log.warn("Не корректный параметр поиска");

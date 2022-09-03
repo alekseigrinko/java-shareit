@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.shareit.booking.dto.BookingDtoForReturnItem;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -23,14 +24,5 @@ public class ItemDtoForReturn {
     private Long owner;
     private BookingDtoForReturnItem lastBooking;
     private BookingDtoForReturnItem nextBooking;
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class BookingDtoForReturnItem {
-        private long id;
-        private long bookerId;
-    }
 }
 

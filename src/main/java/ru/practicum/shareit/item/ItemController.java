@@ -40,8 +40,9 @@ public class ItemController {
 
 
     @GetMapping("/{itemId}")
-    ItemDtoWithComment getItem(@PathVariable long itemId) {
-        return itemService.getItem(itemId);
+    ItemDtoWithComment getItem(@PathVariable long itemId,
+                               @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.getItem(itemId, userId);
     }
 
     @GetMapping

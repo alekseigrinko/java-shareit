@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.shareit.booking.dto.BookingDtoForReturnItem;
 import ru.practicum.shareit.item.model.Comment;
 
 import javax.validation.constraints.NotBlank;
@@ -24,4 +25,6 @@ public class ItemDtoWithComment {
     private Boolean available;
     private Long owner;
     private List<CommentDtoForReturnItem> comments;
+    private BookingDtoForReturnItem lastBooking;
+    private BookingDtoForReturnItem nextBooking;
 }

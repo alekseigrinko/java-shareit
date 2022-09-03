@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.shareit.user.dto.UserForReturnByBooker;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -19,6 +18,6 @@ public class CommentDto {
     @NotBlank(message = "Пустой комментарий")
     private String text;
     private ItemDtoForReturnByBooking item;
-    private UserForReturnByBooker author;
+    String authorName;
     LocalDateTime created;
 }

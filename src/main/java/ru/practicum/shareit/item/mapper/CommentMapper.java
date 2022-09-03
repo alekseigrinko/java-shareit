@@ -7,12 +7,12 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.user.dto.UserForReturnByBooker;
 
 public class CommentMapper {
-    public static Comment toComment(CommentDto commentDto) {
+    public static Comment toComment(CommentDto commentDto, long authorId) {
         return new Comment(
                 commentDto.getId(),
                 commentDto.getText(),
                 commentDto.getItem().getId(),
-                commentDto.getAuthor().getId(),
+                authorId,
                 commentDto.getCreated()
         );
     }
@@ -22,7 +22,7 @@ public class CommentMapper {
                 comment.getId(),
                 comment.getText(),
                 item,
-                author,
+                author.getName(),
                 comment.getCreated()
 
         );

@@ -15,7 +15,7 @@ public interface ItemService {
 
     String deleteItem(long itemId, long userId);
 
-    ItemDtoWithComment getItem(long itemId);
+    ItemDtoWithComment getItem(long itemId, long userId);
 
     List<ItemDtoForReturn> getItemsOwner(long userId);
 

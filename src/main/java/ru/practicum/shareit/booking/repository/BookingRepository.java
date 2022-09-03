@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,9 +30,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> getAllBookingFuture(long bookerId, LocalDateTime now);
 
     @Query("select b from Booking b " +
-            " where b.bookerId = ?1 and b.status = UPPER(?2)" +
+            " where b.bookerId = ?1 and b.status = ?2" +
             " order by b.start desc ")
-    List<Booking> getAllBookingByStatus(long bookerId, String status);
+    List<Booking> getAllBookingByStatus(long bookerId, Status status);
 
     @Query("select b from Booking b " +
             "inner join Item i on b.itemId = i.id" +
@@ -53,9 +54,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("select b from Booking b " +
             "inner join Item i on b.itemId = i.id" +
-            " where i.owner = ?1 and b.status = UPPER(?2)" +
+            " where i.owner = ?1 and b.status = ?2" +
             " order by b.start desc ")
-    List<Booking> getAllBookingByUserByStatus(long userId, String status);
+    List<Booking> getAllBookingByUserByStatus(long userId, Status status);
 
     @Query("select b from Booking b " +
             "inner join Item i on b.itemId = i.id" +
@@ -65,9 +66,21 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("select b from Booking b " +
             "inner join Item i on b.itemId = i.id" +
-            " where i.id = ?1 and i.owner = ?2 and b.start < ?3" +
+            " where i.id = ?1 and i.owner = ?2" +
             " order by b.start ")
-    List<Booking> getAllBookingByUserCurrentByItem(long itemId, long userId, LocalDateTime now);
+    List<Booking> getAllBookingByUserCurrentByItem(long itemId, long userId);
 
-    Booking findByItemId(long itemId);
+    List<Booking> findAllByItemId(long itemId);
+
+    @Query("select b from Booking b " +
+            "inner join Item i on b.itemId = i.id" +
+            " where i.id = ?1 and i.owner = ?2 and b.end < ?3" +
+            " order by b.end desc ")
+    Booking getLastBooking(long itemId, long userId, LocalDateTime now);
+
+    @Query("select b from Booking b " +
+            "inner join Item i on b.itemId = i.id" +
+            " where i.id = ?1 and i.owner = ?2 and b.start > ?3" +
+            " order by b.end ")
+    Booking getNextBooking(long itemId, long userId, LocalDateTime now);
 }

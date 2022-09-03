@@ -24,6 +24,7 @@ public class UserMapper {
     public static UserForReturnByBooker toUserDtoForReturnByBooker(User user) {
         return new UserForReturnByBooker(
                 user.getId(),
+                user.getName(),
                 user.getEmail()
         );
     }

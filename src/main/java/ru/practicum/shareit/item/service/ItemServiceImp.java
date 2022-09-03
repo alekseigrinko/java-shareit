@@ -39,7 +39,7 @@ public class ItemServiceImp implements ItemService {
     }
 
     @Override
-    public ItemDtoWithComment getItem(long itemId) {
+    public ItemDtoWithComment getItem(long itemId, long userId) {
         return /*toItemDto(itemDao.getItem(itemId))*/null;
     }
 

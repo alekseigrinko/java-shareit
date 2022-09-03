@@ -13,5 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserForReturnByBooker {
     private Long id;
+    private String name;
     private String email;
 }

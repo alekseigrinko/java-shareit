@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.booking.dto.BookingDtoForReturnItem;
-import ru.practicum.shareit.item.model.Comment;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

@@ -40,7 +40,7 @@ public class BookingServiceByRepository implements BookingService {
     public BookingDtoForReturn addBooking(BookingDto bookingDto, long userId) {
         checkUser(userId);
         checkItem(bookingDto.getItemId());
-        if (itemRepository.findById(bookingDto.getItemId()).get().getOwner() == userId){
+        if (itemRepository.findById(bookingDto.getItemId()).get().getOwner() == userId) {
             log.warn("Бронирование не возможно. Вы являетесь владельцем объекта!");
             throw new ObjectNotFoundException("Бронирование не возможно. Вы являетесь владельцем объекта!");
         }
@@ -66,7 +66,7 @@ public class BookingServiceByRepository implements BookingService {
         Booking booking = bookingRepository.findById(bookingId).get();
         checkItemByUser(booking.getItemId(), userId);
         if (approved) {
-            if(booking.getStatus() != Status.WAITING) {
+            if (booking.getStatus() != Status.WAITING) {
                 throw new BadRequestException("Статус уже подтвержден!");
             }
             booking.setStatus(Status.APPROVED);
@@ -177,15 +177,15 @@ public class BookingServiceByRepository implements BookingService {
     }
 
     private void checkData(LocalDateTime start, LocalDateTime end) {
-        if(!start.isAfter(LocalDateTime.now())) {
+        if (!start.isAfter(LocalDateTime.now())) {
             log.warn("Некорректный формат даты!");
             throw new BadRequestException("Некорректный формат даты!");
         }
-        if(!end.isAfter(LocalDateTime.now())) {
+        if (!end.isAfter(LocalDateTime.now())) {
             log.warn("Некорректный формат даты!");
             throw new BadRequestException("Некорректный формат даты!");
         }
-        if(!end.isAfter(start)) {
+        if (!end.isAfter(start)) {
             log.warn("Некорректный формат даты!");
             throw new BadRequestException("Некорректный формат даты!");
         }
@@ -197,7 +197,8 @@ public class BookingServiceByRepository implements BookingService {
             throw new ObjectNotFoundException("Бронирование ID: " + bookingId + ", не найдено!");
         }
     }
-    private List<BookingDtoForReturn> bookingListToDto (List<Booking> bookingList) {
+
+    private List<BookingDtoForReturn> bookingListToDto(List<Booking> bookingList) {
         List<BookingDtoForReturn> bookingDtoList = new ArrayList<>();
         for (Booking booking : bookingList) {
             UserForReturnByBooker user = toUserDtoForReturnByBooker(userRepository.findById(itemRepository

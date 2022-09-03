@@ -18,7 +18,7 @@ import static ru.practicum.shareit.user.UserMapper.toUserDto;
 @Slf4j
 public class UserServiceByRepository implements UserService {
 
-    final private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserServiceByRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -62,8 +62,8 @@ public class UserServiceByRepository implements UserService {
         return "Пользователь ID" + userId + " удален";
     }
 
-    public void checkUser(long userId){
-        if(!userRepository.existsById(userId)) {
+    public void checkUser(long userId) {
+        if (!userRepository.existsById(userId)) {
             log.warn("Пользователь ID: " + userId + ", не найден!");
             throw new ObjectNotFoundException("Пользователь ID: " + userId + ", не найден!");
         }

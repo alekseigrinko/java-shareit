@@ -30,10 +30,10 @@ import static ru.practicum.shareit.user.UserMapper.toUserDtoForReturnByBooker;
 @Service("ItemServiceByRepository")
 public class ItemServiceByRepository implements ItemService {
 
-    final private ItemRepository itemRepository;
-    final private UserRepository userRepository;
-    final private BookingRepository bookingRepository;
-    final private CommentRepository commentRepository;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
     public ItemServiceByRepository(ItemRepository itemRepository, UserRepository userRepository,
                                    BookingRepository bookingRepository, CommentRepository commentRepository) {
@@ -82,7 +82,7 @@ public class ItemServiceByRepository implements ItemService {
 
         log.warn("предоставлена информация по объекту ID: " + itemId);
         List<CommentDtoForReturnItem> commentDtoList = new ArrayList<>();
-        for(Comment comment: commentRepository.findAllByItem(itemId)) {
+        for (Comment comment: commentRepository.findAllByItem(itemId)) {
             commentDtoList.add(toCommentDtoForReturnItem(comment, userRepository.findById(comment.getAuthor()).get().getName()));
         }
         Item item = itemRepository.findById(itemId).get();
@@ -149,7 +149,7 @@ public class ItemServiceByRepository implements ItemService {
         }
     }
 
-    private List<Booking> findBookingForItem (long itemId, long userId) {
+    private List<Booking> findBookingForItem(long itemId, long userId) {
         return bookingRepository.getAllBookingByUserCurrentByItem(itemId, userId);
     }
 
@@ -157,13 +157,13 @@ public class ItemServiceByRepository implements ItemService {
         checkItem(itemId);
         checkUser(userId);
         List<Booking> bookingList = bookingRepository.findAllByItemId(itemId);
-        if(bookingList.size() == 0) {
+        if (bookingList.size() == 0) {
             throw new BadRequestException("Объектом еще не пользовались!");
         }
-        if(bookingList.get(0).getStatus() == Status.WAITING) {
+        if (bookingList.get(0).getStatus() == Status.WAITING) {
             throw new BadRequestException("Объектом еще не пользовались!");
         }
-        if(bookingList.get(0).getStatus() == Status.REJECTED) {
+        if (bookingList.get(0).getStatus() == Status.REJECTED) {
             throw new BadRequestException("Объектом еще не пользовались!");
         }
     }
@@ -178,7 +178,7 @@ public class ItemServiceByRepository implements ItemService {
         }
         Booking lastBooking = bookingRepository.getLastBooking(item.getId(), userId, LocalDateTime.now());
         Booking nextBooking = bookingRepository.getNextBooking(item.getId(), userId, LocalDateTime.now());
-        if(lastBooking == null) {
+        if (lastBooking == null) {
             return toItemDtoForReturn(item, null, toBookingDtoForReturnItem(nextBooking));
         }
         if (nextBooking == null) {

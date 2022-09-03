@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.mapper;
 
 import ru.practicum.shareit.booking.dto.BookingDtoForReturnItem;
 import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserForReturnByBooker;
 

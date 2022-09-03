@@ -7,8 +7,12 @@ import java.util.List;
 
 public interface BookingService {
     BookingDtoForReturn addBooking(BookingDto bookingDto, long userId);
+
     BookingDtoForReturn approvedBooking(long userId, long bookingId, boolean approved);
+
     BookingDtoForReturn getBooking(long userId, long bookingId);
+
     List<BookingDtoForReturn> getAllBookingByBooker(long bookerId, String state);
+
     List<BookingDtoForReturn> getAllBookingByUser(long userId, String state);
 }

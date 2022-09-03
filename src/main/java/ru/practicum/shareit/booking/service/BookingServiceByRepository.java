@@ -3,15 +3,12 @@ package ru.practicum.shareit.booking.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingMapping;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exeption.BadRequestException;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
-import ru.practicum.shareit.exeption.ValidationException;
-import ru.practicum.shareit.item.dto.ItemDtoForReturn;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserForReturnByBooker;
@@ -47,8 +44,11 @@ public class BookingServiceByRepository implements BookingService {
             log.warn("Бронирование не возможно. Вы являетесь владельцем объекта!");
             throw new ObjectNotFoundException("Бронирование не возможно. Вы являетесь владельцем объекта!");
         }
-        checkData(bookingDto.getStart());
-        checkData(bookingDto.getEnd());
+        if (!itemRepository.findById(bookingDto.getItemId()).get().getAvailable()) {
+            log.warn("Объект не доступен для бронирования!");
+            throw new BadRequestException("Объект не доступен для бронирования!");
+        }
+        checkData(bookingDto.getStart(), bookingDto.getEnd());
         bookingDto.setStatus(Status.WAITING);
         bookingDto.setBookerId(userId);
         UserForReturnByBooker user = toUserDtoForReturnByBooker(userRepository.findById(itemRepository
@@ -176,8 +176,16 @@ public class BookingServiceByRepository implements BookingService {
         }
     }
 
-    private void checkData(LocalDateTime localDateTime) {
-        if(!localDateTime.isAfter(LocalDateTime.now())) {
+    private void checkData(LocalDateTime start, LocalDateTime end) {
+        if(!start.isAfter(LocalDateTime.now())) {
+            log.warn("Некорректный формат даты!");
+            throw new BadRequestException("Некорректный формат даты!");
+        }
+        if(!end.isAfter(LocalDateTime.now())) {
+            log.warn("Некорректный формат даты!");
+            throw new BadRequestException("Некорректный формат даты!");
+        }
+        if(!end.isAfter(start)) {
             log.warn("Некорректный формат даты!");
             throw new BadRequestException("Некорректный формат даты!");
         }
@@ -208,7 +216,7 @@ public class BookingServiceByRepository implements BookingService {
         if (item.getOwner() != userId) {
             if (bookingRepository.findById(bookingId).get().getBookerId() != userId) {
                 log.warn("У пользователя недостаточно прав для просмотра бронирования!");
-                throw new BadRequestException("У пользователя недостаточно прав для просмотра бронирования!");
+                throw new ObjectNotFoundException("У пользователя недостаточно прав для просмотра бронирования!");
             }
         }
     }

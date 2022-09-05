@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.State;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
@@ -24,13 +25,13 @@ import static ru.practicum.shareit.user.UserMapper.toUserDtoForReturnByBooker;
 
 @Service
 @Slf4j
-public class BookingServiceByRepository implements BookingService {
+public class BookingServiceImp implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    public BookingServiceByRepository(BookingRepository bookingRepository, ItemRepository itemRepository,
-            UserRepository userRepository) {
+    public BookingServiceImp(BookingRepository bookingRepository, ItemRepository itemRepository,
+                             UserRepository userRepository) {
         this.bookingRepository = bookingRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
@@ -94,26 +95,26 @@ public class BookingServiceByRepository implements BookingService {
     }
 
     @Override
-    public List<BookingDtoForReturn> getAllBookingByBooker(long bookerId, String state) {
+    public List<BookingDtoForReturn> getAllBookingByBooker(long bookerId, State state) {
         checkUser(bookerId);
         List<Booking> bookingList;
         switch (state) {
-            case "ALL":
+            case ALL:
                 bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
                 break;
-            case "CURRENT":
+            case CURRENT:
                 bookingList = bookingRepository.getAllBookingCurrent(bookerId, LocalDateTime.now());
                 break;
-            case "PAST":
+            case PAST:
                 bookingList = bookingRepository.getAllBookingPast(bookerId, LocalDateTime.now());
                 break;
-            case "FUTURE":
+            case FUTURE:
                 bookingList = bookingRepository.getAllBookingFuture(bookerId, LocalDateTime.now());
                 break;
-            case "WAITING":
+            case WAITING:
                 bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.WAITING);
                 break;
-            case "REJECTED":
+            case REJECTED:
                 bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.REJECTED);
                 break;
             default:
@@ -125,26 +126,26 @@ public class BookingServiceByRepository implements BookingService {
     }
 
     @Override
-    public List<BookingDtoForReturn> getAllBookingByUser(long userId, String state) {
+    public List<BookingDtoForReturn> getAllBookingByUser(long userId, State state) {
         checkUser(userId);
         List<Booking> bookingList;
         switch (state) {
-            case "ALL":
+            case ALL:
                 bookingList = bookingRepository.getAllBookingByUserId(userId);
                 break;
-            case "CURRENT":
+            case CURRENT:
                 bookingList = bookingRepository.getAllBookingByUserCurrent(userId, LocalDateTime.now());
                 break;
-            case "PAST":
+            case PAST:
                 bookingList = bookingRepository.getAllBookingByUserPast(userId, LocalDateTime.now());
                 break;
-            case "FUTURE":
+            case FUTURE:
                 bookingList = bookingRepository.getAllBookingByUserFuture(userId, LocalDateTime.now());
                 break;
-            case "WAITING":
+            case WAITING:
                 bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.WAITING);
                 break;
-            case "REJECTED":
+            case REJECTED:
                 bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.REJECTED);
                 break;
             default:

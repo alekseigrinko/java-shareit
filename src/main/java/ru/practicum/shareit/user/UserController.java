@@ -16,7 +16,7 @@ public class UserController {
 
     UserService userService;
 
-    public UserController(@Qualifier("UserServiceByRepository") UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 

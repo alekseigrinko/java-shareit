@@ -15,7 +15,7 @@ public class ItemController {
 
     final ItemService itemService;
 
-    public ItemController(@Qualifier("ItemServiceByRepository") ItemService itemService) {
+    public ItemController(ItemService itemService) {
         this.itemService = itemService;
     }
 

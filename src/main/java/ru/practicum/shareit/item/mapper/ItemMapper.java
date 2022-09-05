@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item.mapper;
 
+import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
 import ru.practicum.shareit.booking.dto.BookingDtoForReturnItem;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.dto.UserForReturnByBooker;
 
 import java.util.List;
 
@@ -54,8 +54,8 @@ public class ItemMapper {
         );
     }
 
-    public static ItemDtoForReturnByBooking toItemDtoForReturnByBooking(Item item, UserForReturnByBooker userForReturnByBooker) {
-        return new ItemDtoForReturnByBooking(
+    public static BookingDtoForReturn.ItemDtoForReturnByBooking toItemDtoForReturnByBooking(Item item, BookingDtoForReturn.UserForReturnByBooker userForReturnByBooker) {
+        return new BookingDtoForReturn.ItemDtoForReturnByBooking(
                 item.getId(),
                 item.getName(),
                 item.getAvailable(),

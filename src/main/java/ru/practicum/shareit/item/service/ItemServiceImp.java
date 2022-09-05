@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exeption.BadRequestException;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
@@ -13,7 +14,6 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.dto.UserForReturnByBooker;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -120,8 +120,8 @@ public class ItemServiceImp implements ItemService {
         }
         checkBookingByUser(itemId, userId);
         Item item = itemRepository.findById(itemId).get();
-        UserForReturnByBooker user = toUserDtoForReturnByBooker(userRepository.findById(userId).get());
-        UserForReturnByBooker owner = toUserDtoForReturnByBooker(userRepository.findById(item.getOwner()).get());
+        BookingDtoForReturn.UserForReturnByBooker user = toUserDtoForReturnByBooker(userRepository.findById(userId).get());
+        BookingDtoForReturn.UserForReturnByBooker owner = toUserDtoForReturnByBooker(userRepository.findById(item.getOwner()).get());
         commentDto.setItem(toItemDtoForReturnByBooking(itemRepository.findById(itemId).get(), owner));
         commentDto.setCreated(LocalDateTime.now());
         return toCommentDto(commentRepository.save(toComment(commentDto, userId)),

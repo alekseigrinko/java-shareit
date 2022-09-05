@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.booking.Status;
-import ru.practicum.shareit.item.dto.ItemDtoForReturnByBooking;
-import ru.practicum.shareit.user.dto.UserForReturnByBooker;
 
 import java.time.LocalDateTime;
 
@@ -21,4 +19,25 @@ public class BookingDtoForReturn {
     private ItemDtoForReturnByBooking item;
     private UserForReturnByBooker booker;
     private Status status;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ItemDtoForReturnByBooking {
+        private long id;
+        private String name;
+        private Boolean available;
+        private UserForReturnByBooker owner;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserForReturnByBooker {
+        private Long id;
+        private String name;
+        private String email;
+    }
 }

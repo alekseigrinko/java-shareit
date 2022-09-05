@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.mapper;
 
-import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
-import ru.practicum.shareit.booking.dto.BookingDtoForReturnItem;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDtoForItem;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 
@@ -28,9 +28,9 @@ public class ItemMapper {
         );
     }
 
-    public static ItemDtoForReturn toItemDtoForReturn(Item item, BookingDtoForReturnItem lastBooking,
-                                                      BookingDtoForReturnItem nextBooking) {
-        return new ItemDtoForReturn(
+    public static ItemResponseDto toItemDtoForReturn(Item item, BookingResponseDtoForItem lastBooking,
+                                                     BookingResponseDtoForItem nextBooking) {
+        return new ItemResponseDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
@@ -41,8 +41,8 @@ public class ItemMapper {
         );
     }
 
-    public static ItemDtoWithComment toItemDtoWithComment(ItemDtoForReturn item, List<CommentDtoForReturnItem> comments) {
-        return new ItemDtoWithComment(
+    public static ItemResponseDtoWithComment toItemDtoWithComment(ItemResponseDto item, List<CommentResponseDtoForItem> comments) {
+        return new ItemResponseDtoWithComment(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
@@ -54,12 +54,12 @@ public class ItemMapper {
         );
     }
 
-    public static BookingDtoForReturn.ItemDtoForReturnByBooking toItemDtoForReturnByBooking(Item item, BookingDtoForReturn.UserForReturnByBooker userForReturnByBooker) {
-        return new BookingDtoForReturn.ItemDtoForReturnByBooking(
+    public static BookingResponseDto.ItemResponseDtoForBooking toItemDtoForReturnByBooking(Item item, BookingResponseDto.UserResponseDtoForBooker userResponseDtoForBooker) {
+        return new BookingResponseDto.ItemResponseDtoForBooking(
                 item.getId(),
                 item.getName(),
                 item.getAvailable(),
-                userForReturnByBooker
+                userResponseDtoForBooker
         );
     }
 }

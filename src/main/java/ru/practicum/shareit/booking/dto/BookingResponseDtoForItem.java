@@ -10,7 +10,7 @@ import ru.practicum.shareit.booking.Status;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDtoForReturnItem {
+public class BookingResponseDtoForItem {
     private long id;
     private long bookerId;
     private Status status;

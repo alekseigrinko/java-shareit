@@ -39,13 +39,13 @@ public class ItemController {
 
 
     @GetMapping("/{itemId}")
-    ItemDtoWithComment getItem(@PathVariable long itemId,
-                               @RequestHeader("X-Sharer-User-Id") long userId) {
+    ItemResponseDtoWithComment getItem(@PathVariable long itemId,
+                                       @RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getItem(itemId, userId);
     }
 
     @GetMapping
-    List<ItemDtoForReturn> getItemsOwner(@RequestHeader("X-Sharer-User-Id") long userId) {
+    List<ItemResponseDto> getItemsOwner(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getItemsOwner(userId);
     }
 

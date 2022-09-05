@@ -1,6 +1,6 @@
 package ru.practicum.shareit.user;
 
-import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -21,8 +21,8 @@ public class UserMapper {
         );
     }
 
-    public static BookingDtoForReturn.UserForReturnByBooker toUserDtoForReturnByBooker(User user) {
-        return new BookingDtoForReturn.UserForReturnByBooker(
+    public static BookingResponseDto.UserResponseDtoForBooker toUserDtoForReturnByBooker(User user) {
+        return new BookingResponseDto.UserResponseDtoForBooker(
                 user.getId(),
                 user.getName(),
                 user.getEmail()

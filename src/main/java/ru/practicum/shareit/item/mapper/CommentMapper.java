@@ -1,8 +1,8 @@
 package ru.practicum.shareit.item.mapper;
 
-import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentDtoForReturnItem;
+import ru.practicum.shareit.item.dto.CommentResponseDtoForItem;
 import ru.practicum.shareit.item.model.Comment;
 
 public class CommentMapper {
@@ -16,7 +16,7 @@ public class CommentMapper {
         );
     }
 
-    public static CommentDto toCommentDto(Comment comment, BookingDtoForReturn.ItemDtoForReturnByBooking item, BookingDtoForReturn.UserForReturnByBooker author) {
+    public static CommentDto toCommentDto(Comment comment, BookingResponseDto.ItemResponseDtoForBooking item, BookingResponseDto.UserResponseDtoForBooker author) {
         return new CommentDto(
                 comment.getId(),
                 comment.getText(),
@@ -27,8 +27,8 @@ public class CommentMapper {
         );
     }
 
-    public static CommentDtoForReturnItem toCommentDtoForReturnItem(Comment comment, String author) {
-        return new CommentDtoForReturnItem(
+    public static CommentResponseDtoForItem toCommentDtoForReturnItem(Comment comment, String author) {
+        return new CommentResponseDtoForItem(
                 comment.getId(),
                 comment.getText(),
                 author,

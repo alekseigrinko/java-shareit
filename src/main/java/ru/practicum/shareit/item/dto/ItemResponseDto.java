@@ -4,17 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.shareit.booking.dto.BookingDtoForReturnItem;
+import ru.practicum.shareit.booking.dto.BookingResponseDtoForItem;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDtoWithComment {
+public class ItemResponseDto {
     private Long id;
     @NotBlank(groups = {Create.class}, message = "Некорректно имя объекта")
     private String name;
@@ -23,7 +22,9 @@ public class ItemDtoWithComment {
     @NotNull(groups = {Create.class}, message = "Статус не может быть пустым")
     private Boolean available;
     private Long owner;
-    private List<CommentDtoForReturnItem> comments;
-    private BookingDtoForReturnItem lastBooking;
-    private BookingDtoForReturnItem nextBooking;
+    private BookingResponseDtoForItem lastBooking;
+    private BookingResponseDtoForItem nextBooking;
+
+
 }
+

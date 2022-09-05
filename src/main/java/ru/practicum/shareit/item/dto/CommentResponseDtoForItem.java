@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentDtoForReturnItem {
+public class CommentResponseDtoForItem {
     private long id;
     @NotBlank(message = "Пустой комментарий")
     private String text;

@@ -12,30 +12,30 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDtoForReturn {
+public class BookingResponseDto {
     private long id;
     private LocalDateTime start;
     private LocalDateTime end;
-    private ItemDtoForReturnByBooking item;
-    private UserForReturnByBooker booker;
+    private ItemResponseDtoForBooking item;
+    private UserResponseDtoForBooker booker;
     private Status status;
 
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ItemDtoForReturnByBooking {
+    public static class ItemResponseDtoForBooking {
         private long id;
         private String name;
         private Boolean available;
-        private UserForReturnByBooker owner;
+        private UserResponseDtoForBooker owner;
     }
 
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UserForReturnByBooker {
+    public static class UserResponseDtoForBooker {
         private Long id;
         private String name;
         private String email;

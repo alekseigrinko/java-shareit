@@ -1,8 +1,8 @@
 package ru.practicum.shareit.booking;
 
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
-import ru.practicum.shareit.booking.dto.BookingDtoForReturnItem;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDtoForItem;
 
 public class BookingMapping {
     public static Booking toBooking(BookingDto bookingDto) {
@@ -16,23 +16,23 @@ public class BookingMapping {
         );
     }
 
-    public static BookingDtoForReturnItem toBookingDtoForReturnItem(Booking booking) {
-        return new BookingDtoForReturnItem(
+    public static BookingResponseDtoForItem toBookingDtoForReturnItem(Booking booking) {
+        return new BookingResponseDtoForItem(
                 booking.getId(),
                 booking.getBookerId(),
                 booking.getStatus()
         );
     }
 
-    public static BookingDtoForReturn toBookingDtoForReturn(Booking booking,
-                                                            BookingDtoForReturn.ItemDtoForReturnByBooking itemDtoForReturnByBooking,
-                                                            BookingDtoForReturn.UserForReturnByBooker userForReturnByBooker) {
-        return new BookingDtoForReturn(
+    public static BookingResponseDto toBookingDtoForReturn(Booking booking,
+                                                           BookingResponseDto.ItemResponseDtoForBooking itemResponseDtoForBooking,
+                                                           BookingResponseDto.UserResponseDtoForBooker userResponseDtoForBooker) {
+        return new BookingResponseDto(
                 booking.getId(),
                 booking.getStart(),
                 booking.getEnd(),
-                itemDtoForReturnByBooking,
-                userForReturnByBooker,
+                itemResponseDtoForBooking,
+                userResponseDtoForBooker,
                 booking.getStatus()
         );
     }

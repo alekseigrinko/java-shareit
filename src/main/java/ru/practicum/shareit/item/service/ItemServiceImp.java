@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.Status;
-import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exeption.BadRequestException;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
@@ -77,11 +77,11 @@ public class ItemServiceImp implements ItemService {
     }
 
     @Override
-    public ItemDtoWithComment getItem(long itemId, long userId) {
+    public ItemResponseDtoWithComment getItem(long itemId, long userId) {
         checkItem(itemId);
 
         log.warn("предоставлена информация по объекту ID: " + itemId);
-        List<CommentDtoForReturnItem> commentDtoList = new ArrayList<>();
+        List<CommentResponseDtoForItem> commentDtoList = new ArrayList<>();
         for (Comment comment: commentRepository.findAllByItem(itemId)) {
             commentDtoList.add(toCommentDtoForReturnItem(comment, userRepository.findById(comment.getAuthor()).get().getName()));
         }
@@ -90,9 +90,9 @@ public class ItemServiceImp implements ItemService {
     }
 
     @Override
-    public List<ItemDtoForReturn> getItemsOwner(long userId) {
+    public List<ItemResponseDto> getItemsOwner(long userId) {
         checkUser(userId);
-        List<ItemDtoForReturn> itemList = new ArrayList<>();
+        List<ItemResponseDto> itemList = new ArrayList<>();
         for (Item item: itemRepository.findAllByOwner(userId)) {
             itemList.add(updateBookingByItem(item, userId, userId));
 
@@ -120,8 +120,8 @@ public class ItemServiceImp implements ItemService {
         }
         checkBookingByUser(itemId, userId);
         Item item = itemRepository.findById(itemId).get();
-        BookingDtoForReturn.UserForReturnByBooker user = toUserDtoForReturnByBooker(userRepository.findById(userId).get());
-        BookingDtoForReturn.UserForReturnByBooker owner = toUserDtoForReturnByBooker(userRepository.findById(item.getOwner()).get());
+        BookingResponseDto.UserResponseDtoForBooker user = toUserDtoForReturnByBooker(userRepository.findById(userId).get());
+        BookingResponseDto.UserResponseDtoForBooker owner = toUserDtoForReturnByBooker(userRepository.findById(item.getOwner()).get());
         commentDto.setItem(toItemDtoForReturnByBooking(itemRepository.findById(itemId).get(), owner));
         commentDto.setCreated(LocalDateTime.now());
         return toCommentDto(commentRepository.save(toComment(commentDto, userId)),
@@ -168,7 +168,7 @@ public class ItemServiceImp implements ItemService {
         }
     }
 
-    private ItemDtoForReturn updateBookingByItem(Item item, long userId, long checkId) {
+    private ItemResponseDto updateBookingByItem(Item item, long userId, long checkId) {
         if (item.getOwner() != checkId) {
             return toItemDtoForReturn(item, null, null);
         }

@@ -13,12 +13,16 @@ public enum State {
     REJECTED;
 
     public static Optional<State> checkState(String line) {
-        Optional<State> state = Optional.empty();
-        try {
-            state = Optional.of(State.valueOf(line));
-        } catch (IllegalArgumentException e) {
-            new BadRequestException("Unknown state: " + line);
+        boolean check = false;
+        for (State state: State.values()) {
+            if (state.toString().equals(line)) {
+                check = true;
+                break;
+            }
         }
-        return state;
+        if (!check) {
+            throw new BadRequestException("Unknown state: " + line);
+        }
+        return Optional.of(State.valueOf(line));
     }
 }

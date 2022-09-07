@@ -44,14 +44,14 @@ public class BookingController {
     @GetMapping
     List<BookingResponseDto> getAllBookingByBooker(@RequestParam(value = "state", defaultValue = "ALL") String line,
                                                    @RequestHeader("X-Sharer-User-Id") long userId) {
-        State state = checkState(line).orElseThrow(()-> new BadRequestException("Unknown state: " + line));
+        State state = checkState(line).orElseThrow(() -> new BadRequestException("Unknown state: " + line));
         return bookingService.getAllBookingByBooker(userId, state);
     }
 
     @GetMapping("/owner")
     List<BookingResponseDto> getAllBookingByUser(@RequestParam(value = "state", defaultValue = "ALL") String line,
                                                  @RequestHeader("X-Sharer-User-Id") long userId) {
-        State state = checkState(line).orElseThrow(()-> new BadRequestException("Unknown state: " + line));
+        State state = checkState(line).orElseThrow(() -> new BadRequestException("Unknown state: " + line));
         return bookingService.getAllBookingByUser(userId, state);
     }
 }

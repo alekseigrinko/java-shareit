@@ -24,6 +24,14 @@ public class ErrorHandler {
         );
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequest(final RuntimeException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
     public class ErrorResponse {
 
         String error;

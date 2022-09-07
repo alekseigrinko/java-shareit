@@ -10,6 +10,8 @@ import ru.practicum.shareit.exeption.BadRequestException;
 import javax.validation.Valid;
 import java.util.List;
 
+import static ru.practicum.shareit.booking.State.checkState;
+
 @RestController
 @RequestMapping(path = "/bookings")
 @Slf4j
@@ -42,26 +44,14 @@ public class BookingController {
     @GetMapping
     List<BookingResponseDto> getAllBookingByBooker(@RequestParam(value = "state", defaultValue = "ALL") String line,
                                                    @RequestHeader("X-Sharer-User-Id") long userId) {
-        State state = null;
-        try {
-            state = State.valueOf(line);
-        } catch (IllegalArgumentException e) {
-            log.warn("Не корректный параметр поиска");
-            throw new BadRequestException("Unknown state: " + line);
-        }
+        State state = checkState(line).orElseThrow(()-> new BadRequestException("Unknown state: " + line));
         return bookingService.getAllBookingByBooker(userId, state);
     }
 
     @GetMapping("/owner")
     List<BookingResponseDto> getAllBookingByUser(@RequestParam(value = "state", defaultValue = "ALL") String line,
                                                  @RequestHeader("X-Sharer-User-Id") long userId) {
-        State state = null;
-        try {
-            state = State.valueOf(line);
-        } catch (IllegalArgumentException e) {
-            log.warn("Не корректный параметр поиска");
-            throw new BadRequestException("Unknown state: " + line);
-        }
+        State state = checkState(line).orElseThrow(()-> new BadRequestException("Unknown state: " + line));
         return bookingService.getAllBookingByUser(userId, state);
     }
 }

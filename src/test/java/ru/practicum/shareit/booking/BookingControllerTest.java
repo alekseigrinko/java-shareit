@@ -140,8 +140,7 @@ class BookingControllerTest {
         bookingResponseDto.setStatus(Status.APPROVED);
         bookingTestList.add(bookingResponseDto);
 
-        when(bookingService.getAllBookingByBooker(anyLong(), any(State.class), any(PageRequest.class))).
-                thenReturn(bookingTestList);
+        when(bookingService.getAllBookingByBooker(anyLong(), any(State.class), any(PageRequest.class))).thenReturn(bookingTestList);
 
         mockMvc.perform(get("/bookings/")
                         .content(mapper.writeValueAsString(bookingResponseDto))
@@ -170,8 +169,7 @@ class BookingControllerTest {
         bookingResponseDto.setStatus(Status.APPROVED);
         bookingTestList.add(bookingResponseDto);
 
-        when(bookingService.getAllBookingByUser(anyLong(), any(State.class), any(PageRequest.class))).
-                thenReturn(bookingTestList);
+        when(bookingService.getAllBookingByUser(anyLong(), any(State.class), any(PageRequest.class))).thenReturn(bookingTestList);
 
         mockMvc.perform(get("/bookings/owner")
                         .content(mapper.writeValueAsString(bookingResponseDto))

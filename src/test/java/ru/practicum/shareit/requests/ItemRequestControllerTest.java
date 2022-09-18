@@ -7,15 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingController;
-import ru.practicum.shareit.booking.Status;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
-import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.requests.dto.ItemRequestDto;
@@ -35,11 +30,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.practicum.shareit.booking.BookingMapping.toBookingDtoForReturn;
 import static ru.practicum.shareit.item.mapper.ItemMapper.*;
 import static ru.practicum.shareit.requests.ItemRequestMapper.toItemRequestDto;
 import static ru.practicum.shareit.requests.ItemRequestMapper.toItemRequestReturnDto;
-import static ru.practicum.shareit.user.UserMapper.toUserDtoForReturnByBooker;
 
 @WebMvcTest(controllers = ItemRequestController.class)
 @AutoConfigureMockMvc
@@ -66,12 +59,7 @@ class ItemRequestControllerTest {
         user = new User(1L, "user", "user@user.com");
         user2 = new User(2L, "user2", "user2@user.com");
         item = new Item(1L, "item", "description", false, user.getId(), user2.getId());
-        /*booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-                item.getId(), user2.getId(), Status.WAITING);
-        bookingResponseDto = toBookingDtoForReturn(booking,
-                toItemDtoForReturnByBooking(item, toUserDtoForReturnByBooker(user)),
-                toUserDtoForReturnByBooker(user2));*/
-        itemRequest = new ItemRequest(1l, "request", user2.getId(), LocalDateTime.now());
+        itemRequest = new ItemRequest(1, "request", user2.getId(), LocalDateTime.now());
     }
 
     @Test

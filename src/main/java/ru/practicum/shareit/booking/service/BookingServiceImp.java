@@ -95,6 +95,7 @@ public class BookingServiceImp implements BookingService {
     }
 
     @Override
+
     public List<BookingResponseDto> getAllBookingByBooker(long bookerId, State state, PageRequest pageRequest) {
         checkUser(bookerId);
         List<Booking> bookingList;

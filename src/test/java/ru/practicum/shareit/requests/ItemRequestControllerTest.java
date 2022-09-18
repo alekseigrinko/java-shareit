@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.Booking;
@@ -95,7 +96,7 @@ class ItemRequestControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", user.getId()))
+                        .header("X-Sharer-User-Id", user2.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(itemRequest.getId()), Long.class))
@@ -108,9 +109,50 @@ class ItemRequestControllerTest {
 
     @Test
     void getItemRequestById() throws Exception {
+        long pathVariable = 1;
+        List<ItemDto> itemDtoList = new ArrayList<>();
+        itemDtoList.add(toItemDto(item));
+        ItemRequestReturnDto itemRequestReturnDto = toItemRequestReturnDto(itemRequest, itemDtoList);
+
+        when(itemRequestService.getItemRequestById(anyLong(), anyLong())).thenReturn(itemRequestReturnDto);
+
+        mockMvc.perform(get("/requests/" + pathVariable)
+                        .content(mapper.writeValueAsString(toItemRequestDto(itemRequest)))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", user2.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(itemRequest.getId()), Long.class))
+                .andExpect(jsonPath("$.description", is(itemRequest.getDescription())))
+                .andExpect(jsonPath("$.requester", is(itemRequest.getRequester()), Long.class));
+
+        verify(itemRequestService, times(1))
+                .getItemRequestById(anyLong(), anyLong());
     }
 
     @Test
     void getAllRequests() throws Exception {
+        List<ItemDto> itemDtoList = new ArrayList<>();
+        itemDtoList.add(toItemDto(item));
+        List<ItemRequestReturnDto> itemRequestReturnDtoList = new ArrayList<>();
+        itemRequestReturnDtoList.add(toItemRequestReturnDto(itemRequest, itemDtoList));
+
+        when(itemRequestService.getAllRequests(any(PageRequest.class), anyLong())).thenReturn(itemRequestReturnDtoList);
+
+        mockMvc.perform(get("/requests/all")
+                        .content(mapper.writeValueAsString(toItemRequestDto(itemRequest)))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", user.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(itemRequest.getId()), Long.class))
+                .andExpect(jsonPath("$[0].description", is(itemRequest.getDescription())))
+                .andExpect(jsonPath("$[0].requester", is(itemRequest.getRequester()), Long.class));
+
+        verify(itemRequestService, times(1))
+                .getAllRequests(any(PageRequest.class), anyLong());
     }
 }

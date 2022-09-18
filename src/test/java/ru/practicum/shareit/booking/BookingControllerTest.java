@@ -190,6 +190,5 @@ class BookingControllerTest {
 
         verify(bookingService, times(1))
                 .getAllBookingByUser(anyLong(), any(State.class), any(PageRequest.class));
-
     }
 }

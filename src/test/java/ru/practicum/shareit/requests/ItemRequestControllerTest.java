@@ -1,24 +1,128 @@
 package ru.practicum.shareit.requests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingController;
+import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
+import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.requests.dto.ItemRequestDto;
+import ru.practicum.shareit.requests.dto.ItemRequestReturnDto;
+import ru.practicum.shareit.requests.service.ItemRequestService;
+import ru.practicum.shareit.user.model.User;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.shareit.booking.BookingMapping.toBookingDtoForReturn;
+import static ru.practicum.shareit.item.mapper.ItemMapper.*;
+import static ru.practicum.shareit.requests.ItemRequestMapper.toItemRequestDto;
+import static ru.practicum.shareit.requests.ItemRequestMapper.toItemRequestReturnDto;
+import static ru.practicum.shareit.user.UserMapper.toUserDtoForReturnByBooker;
+
+@WebMvcTest(controllers = ItemRequestController.class)
+@AutoConfigureMockMvc
 class ItemRequestControllerTest {
 
-    @Test
-    void createItemRequest() {
+    @MockBean
+    ItemRequestService itemRequestService;
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper mapper;
+
+    Item item;
+    User user;
+    User user2;
+    Booking booking;
+    BookingResponseDto bookingResponseDto;
+    ItemRequest itemRequest;
+
+    @BeforeEach
+    void setUp() {
+        user = new User(1L, "user", "user@user.com");
+        user2 = new User(2L, "user2", "user2@user.com");
+        item = new Item(1L, "item", "description", false, user.getId(), user2.getId());
+        /*booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
+                item.getId(), user2.getId(), Status.WAITING);
+        bookingResponseDto = toBookingDtoForReturn(booking,
+                toItemDtoForReturnByBooking(item, toUserDtoForReturnByBooker(user)),
+                toUserDtoForReturnByBooker(user2));*/
+        itemRequest = new ItemRequest(1l, "request", user2.getId(), LocalDateTime.now());
     }
 
     @Test
-    void getAllUserRequests() {
+    void createItemRequest() throws Exception {
+        when(itemRequestService.create(anyLong(), any(ItemRequestDto.class))).thenReturn(toItemRequestDto(itemRequest));
+
+        mockMvc.perform(post("/requests")
+                        .content(mapper.writeValueAsString(toItemRequestDto(itemRequest)))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", user2.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(itemRequest.getId()), Long.class))
+                .andExpect(jsonPath("$.description", is(itemRequest.getDescription())))
+                .andExpect(jsonPath("$.requester", is(itemRequest.getRequester()), Long.class));
+
+        verify(itemRequestService, times(1))
+                .create(anyLong(), any(ItemRequestDto.class));
     }
 
     @Test
-    void getItemRequestById() {
+    void getAllUserRequests() throws Exception {
+        List<ItemDto> itemDtoList = new ArrayList<>();
+        itemDtoList.add(toItemDto(item));
+        List<ItemRequestReturnDto> itemRequestReturnDtoList = new ArrayList<>();
+        itemRequestReturnDtoList.add(toItemRequestReturnDto(itemRequest, itemDtoList));
+
+        when(itemRequestService.getAllUserRequests(anyLong())).thenReturn(itemRequestReturnDtoList);
+
+        mockMvc.perform(get("/requests")
+                        .content(mapper.writeValueAsString(toItemRequestDto(itemRequest)))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", user.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(itemRequest.getId()), Long.class))
+                .andExpect(jsonPath("$[0].description", is(itemRequest.getDescription())))
+                .andExpect(jsonPath("$[0].requester", is(itemRequest.getRequester()), Long.class));
+
+        verify(itemRequestService, times(1))
+                .getAllUserRequests(anyLong());
     }
 
     @Test
-    void getAllRequests() {
+    void getItemRequestById() throws Exception {
+    }
+
+    @Test
+    void getAllRequests() throws Exception {
     }
 }

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
@@ -41,9 +40,9 @@ class ItemServiceImpTest {
     BookingRepository bookingRepository;
     CommentRepository commentRepository;
 
-    static User user;
-    static User user2;
-    static Item item;
+    User user;
+    User user2;
+    Item item;
 
     @BeforeEach
     void forStart() {
@@ -52,10 +51,6 @@ class ItemServiceImpTest {
         commentRepository = mock(CommentRepository.class);
         userRepository = mock(UserRepository.class);
         itemService = new ItemServiceImp(itemRepository, userRepository, bookingRepository, commentRepository);
-    }
-
-    @BeforeAll
-    static void setUp() {
         user = new User(1L, "user", "user@user.com");
         user2 = new User(2L, "user2", "user2@user.com");
         item = new Item(1L, "item", "description", false, user.getId(), user2.getId());
@@ -160,7 +155,7 @@ class ItemServiceImpTest {
         CommentDto commentDto = toCommentDto(comment,
                 toItemDtoForReturnByBooking(item, toUserDtoForReturnByBooker(user)),
                 toUserDtoForReturnByBooker(user2)
-                );
+        );
         CommentDto commentDtoTest = itemService.addComment(commentDto, user2.getId(), item.getId());
 
         assertEquals("comment", commentDtoTest.getText());

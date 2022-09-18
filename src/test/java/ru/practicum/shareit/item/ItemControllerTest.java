@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,19 +37,16 @@ class ItemControllerTest {
 
     @MockBean
     ItemService itemService;
-
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ObjectMapper mapper;
+    ItemDto itemDto;
+    User user;
+    User user2;
 
-    static ItemDto itemDto;
-    static User user;
-    static User user2;
-
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         user = new User(1L, "user", "user@user.com");
         user2 = new User(2L, "user2", "user2@user.com");
         itemDto = new ItemDto(1L, "item", "description", false, user.getId(), user2.getId());
@@ -77,12 +74,12 @@ class ItemControllerTest {
     }
 
     @Test
-    void updateItem() throws Exception  {
+    void updateItem() throws Exception {
         ItemDto itemDtoUpdate = new ItemDto(null, null, "descriptionUpdate", false,
                 null, null);
         long pathVariable = 1;
         itemDto.setDescription(itemDtoUpdate.getDescription());
-        when(itemService.updateItem(anyLong(), anyLong(),any(ItemDto.class))).thenReturn(itemDto);
+        when(itemService.updateItem(anyLong(), anyLong(), any(ItemDto.class))).thenReturn(itemDto);
         mockMvc.perform(patch("/items/" + pathVariable)
                         .content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -123,7 +120,7 @@ class ItemControllerTest {
         when(itemService.getItem(anyLong(), anyLong())).thenReturn(toItemDtoWithComment(
                 toItemDtoForReturn(
                         toItem(itemDto), null, null),
-        new ArrayList<>()));
+                new ArrayList<>()));
 
         mockMvc.perform(get("/items/" + pathVariable)
                         .content(mapper.writeValueAsString(itemDto))

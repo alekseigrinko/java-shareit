@@ -122,7 +122,7 @@ public class BookingServiceImp implements BookingService {
                 log.warn("Не корректный параметр поиска");
                 throw new BadRequestException("Unknown state: " + state);
         }
-        log.debug("Список по параметру " + state + "предоставлен");
+        log.debug("Список по параметру " + state + " предоставлен");
         return bookingListToDto(bookingList);
     }
 
@@ -153,7 +153,7 @@ public class BookingServiceImp implements BookingService {
                 log.warn("Не корректный параметр поиска");
                 throw new BadRequestException("Unknown state: " + state);
         }
-        log.debug("Список по параметру " + state + "предоставлен");
+        log.debug("Список по параметру " + state + " предоставлен");
         return bookingListToDto(bookingList);
     }
 

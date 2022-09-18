@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user.service;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -21,17 +20,12 @@ class UserServiceImpTest {
 
     UserService userService;
     UserRepository userRepository;
-
-    static UserDto userDto;
+    UserDto userDto;
 
     @BeforeEach
-    void forStart() {
+    void setUp() {
         userRepository = mock(UserRepository.class);
         userService = new UserServiceImp(userRepository);
-    }
-
-    @BeforeAll
-    static void setUp() {
         userDto = new UserDto(1L, "user", "user@user.com");
     }
 
@@ -50,7 +44,7 @@ class UserServiceImpTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(toUser(userDto)));
         UserDto userDtoUpdate = new UserDto(null, "userUpdate", null);
-        userDto = new UserDto(1L, "userUpdate", "user@user.com");
+        userDto.setName(userDtoUpdate.getName());
         when(userRepository.save(any(User.class)))
                 .thenReturn(toUser(userDto));
 

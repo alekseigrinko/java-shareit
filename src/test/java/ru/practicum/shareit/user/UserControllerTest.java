@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,10 +36,10 @@ class UserControllerTest {
     @Autowired
     ObjectMapper mapper;
 
-    static UserDto userDto;
+    UserDto userDto;
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         userDto = new UserDto(1L, "user", "user@user.com");
     }
 

@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import ru.practicum.shareit.exeption.BadRequestException;
+import ru.practicum.shareit.exeption.ObjectNotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.requests.ItemRequest;
@@ -24,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDto;
 import static ru.practicum.shareit.requests.ItemRequestMapper.toItemRequestDto;
 
 class ItemRequestServiceImpTest {
@@ -116,5 +120,38 @@ class ItemRequestServiceImpTest {
         assertEquals(1, itemRequestListTest.size());
         assertEquals(3, itemRequestListTest.get(0).getRequester());
         assertEquals(1, itemRequestListTest.get(0).getItems().get(0).getId());
+    }
+
+    @Test
+    void checkUserTest() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+
+        final ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
+            ItemRequestDto itemRequestDtoTest = itemRequestService.create(5L, toItemRequestDto(itemRequest));
+        });
+
+        assertEquals("Пользователь ID: " + 5 + ", не найден!", thrown.getMessage());
+    }
+
+    @Test
+    void checkItemRequest() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        ItemRequestDto itemRequestDto = new ItemRequestDto(1, " ", user2.getId(), LocalDateTime.now());
+        final BadRequestException thrown = assertThrows(BadRequestException.class, () -> {
+            ItemRequestDto itemRequestDtoTest = itemRequestService.create(3L, itemRequestDto);
+        });
+
+        assertEquals("Описание не может быть пустым", thrown.getMessage());
+    }
+
+    @Test
+    void checkRequest() {
+        when(itemRequestRepository.existsById(anyLong())).thenReturn(false);
+
+        final ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
+            ItemRequestReturnDto itemRequestDtoTest = itemRequestService.getItemRequestById(3L, 3L);
+        });
+
+        assertEquals("Запрос ID: " + 3 + ", не найден!", thrown.getMessage());
     }
 }

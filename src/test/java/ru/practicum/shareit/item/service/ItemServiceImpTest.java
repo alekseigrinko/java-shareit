@@ -8,6 +8,8 @@ import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exeption.BadRequestException;
+import ru.practicum.shareit.exeption.ObjectNotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
@@ -190,9 +192,6 @@ class ItemServiceImpTest {
 
     @Test
     void addComment() {
-        Booking booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-                item.getId(), user2.getId(), Status.APPROVED);
-        Comment comment = new Comment(1L, "comment", item.getId(), user2.getId(), LocalDateTime.now());
         List<Booking> bookingList = new ArrayList<>();
         bookingList.add(booking);
         when(userRepository.existsById(anyLong())).thenReturn(true);
@@ -213,5 +212,79 @@ class ItemServiceImpTest {
         assertEquals("user2", commentDtoTest.getAuthorName());
         assertEquals(commentDto.getAuthorName(), commentDtoTest.getAuthorName());
         assertEquals(comment.getItem(), commentDtoTest.getItem().getId());
+    }
+
+    @Test
+    void checkItemTest() {
+        when(itemRepository.existsById(anyLong())).thenReturn(false);
+
+        final ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
+            ItemResponseDtoWithComment itemResponseDtoWithComment = itemService.getItem(4,user2.getId());
+        });
+
+        assertEquals("Объекта с ID " + 4 + " не найдено!", thrown.getMessage());
+    }
+
+    @Test
+    void checkItemByUser() {
+        when(itemRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+
+        final ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
+            ItemDto itemDtoUpdate = new ItemDto(null, null, "descriptionUpdate", false,
+                    null, null);
+            ItemDto itemDtoTest = itemService.updateItem(1L,3L, itemDtoUpdate);
+        });
+
+        assertEquals("Право редактирования объекта не подтверждено!", thrown.getMessage());
+    }
+
+    @Test
+    void checkUserTest() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+
+        final ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
+            ItemDto itemDto = itemService.addItem(5L, toItemDto(item));
+        });
+
+        assertEquals("Пользователь ID: " + 5 + ", не найден!", thrown.getMessage());
+    }
+
+    @Test
+    void checkBookingByUserTest() {
+        List<Booking> bookingList = new ArrayList<>();
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
+        when(bookingRepository.findAllByItemId(anyLong())).thenReturn(bookingList);
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
+        CommentDto commentDto = new CommentDto();
+
+        final BadRequestException thrown = assertThrows(BadRequestException.class, () -> {
+            CommentDto commentDtoTest = itemService.addComment(commentDto, user2.getId(), item.getId());
+        });
+
+        assertEquals("Объектом еще не пользовались!", thrown.getMessage());
+
+        booking4.setStatus(Status.WAITING);
+        bookingList.add(booking4);
+
+        final BadRequestException thrown2 = assertThrows(BadRequestException.class, () -> {
+            CommentDto commentDtoTest2 = itemService.addComment(commentDto, user2.getId(), item.getId());
+        });
+
+        assertEquals("Объектом еще не пользовались!", thrown2.getMessage());
+
+        booking4.setStatus(Status.REJECTED);
+        bookingList.clear();
+        bookingList.add(booking4);
+
+        final BadRequestException thrown3 = assertThrows(BadRequestException.class, () -> {
+            CommentDto commentDtoTest3 = itemService.addComment(commentDto, user2.getId(), item.getId());
+        });
+
+        assertEquals("Объектом еще не пользовались!", thrown3.getMessage());
     }
 }

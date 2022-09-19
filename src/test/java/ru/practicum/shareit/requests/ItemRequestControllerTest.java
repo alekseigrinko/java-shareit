@@ -10,8 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.requests.dto.ItemRequestDto;
@@ -51,15 +49,13 @@ class ItemRequestControllerTest {
     Item item;
     User user;
     User user2;
-    Booking booking;
-    BookingResponseDto bookingResponseDto;
     ItemRequest itemRequest;
 
     @BeforeEach
     void setUp() {
         user = new User(1L, "user", "user@user.com");
         user2 = new User(2L, "user2", "user2@user.com");
-        item = new Item(1L, "item", "description", false, user.getId(), user2.getId());
+        item = new Item(1L, "item", "description", false, user.getId(), null);
         itemRequest = new ItemRequest(1, "request", user2.getId(), LocalDateTime.now());
     }
 

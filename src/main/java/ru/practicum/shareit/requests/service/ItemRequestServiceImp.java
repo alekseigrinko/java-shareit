@@ -49,7 +49,7 @@ public class ItemRequestServiceImp implements ItemRequestService {
     public ItemRequestReturnDto getItemRequestById(long requestId, long userId) {
         checkRequest(requestId);
         checkUser(userId);
-        ItemRequest itemRequest = itemRequestRepository.findById(requestId);
+        ItemRequest itemRequest = itemRequestRepository.findById(requestId).get();
         List<ItemDto> itemDtoList = getItemDtoList(itemRequest.getRequester());
         return toItemRequestReturnDto(itemRequest, itemDtoList);
     }

@@ -49,7 +49,7 @@ class ItemControllerTest {
     void setUp() {
         user = new User(1L, "user", "user@user.com");
         user2 = new User(2L, "user2", "user2@user.com");
-        itemDto = new ItemDto(1L, "item", "description", false, user.getId(), user2.getId());
+        itemDto = new ItemDto(1L, "item", "description", false, user.getId(), null);
     }
 
     @Test

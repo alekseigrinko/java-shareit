@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.Booking;
@@ -51,7 +52,7 @@ class BookingServiceImpTest {
         bookingService = new BookingServiceImp(bookingRepository, itemRepository, userRepository);
         user = new User(1L, "user", "user@user.com");
         user2 = new User(2L, "user2", "user2@user.com");
-        item = new Item(1L, "item", "description", true, user.getId(), user2.getId());
+        item = new Item(1L, "item", "description", true, user.getId(), null);
         bookingDto = new BookingDto(1L, LocalDateTime.now().plusMinutes(1), LocalDateTime.now().plusHours(1),
                 item.getId(), user2.getId(), Status.WAITING);
         bookingResponseDto = toBookingDtoForReturn(toBooking(bookingDto),
@@ -120,7 +121,7 @@ class BookingServiceImpTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong(), any(PageRequest.class))).thenReturn(bookingList);
+        when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl(bookingList));
 
         List<BookingResponseDto> bookingDtoTestList = bookingService.getAllBookingByBooker(user2.getId(),
                 State.ALL, pageRequest);
@@ -140,7 +141,7 @@ class BookingServiceImpTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        when(bookingRepository.getAllBookingByUserId(anyLong(), any(PageRequest.class))).thenReturn(bookingList);
+        when(bookingRepository.getAllBookingByUserId(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl(bookingList));
 
         List<BookingResponseDto> bookingDtoTestList = bookingService.getAllBookingByUser(user.getId(),
                 State.ALL, pageRequest);

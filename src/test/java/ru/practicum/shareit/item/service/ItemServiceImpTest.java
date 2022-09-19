@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.Booking;
@@ -15,6 +16,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -42,7 +44,18 @@ class ItemServiceImpTest {
 
     User user;
     User user2;
+    User user3;
+
     Item item;
+    Item item2;
+    ItemRequest itemRequest;
+    ItemRequest itemRequest2;
+    Booking booking;
+    Booking booking2;
+    Booking booking3;
+    Booking booking4;
+    Comment comment;
+    Comment comment2;
 
     @BeforeEach
     void forStart() {
@@ -53,7 +66,21 @@ class ItemServiceImpTest {
         itemService = new ItemServiceImp(itemRepository, userRepository, bookingRepository, commentRepository);
         user = new User(1L, "user", "user@user.com");
         user2 = new User(2L, "user2", "user2@user.com");
-        item = new Item(1L, "item", "description", false, user.getId(), user2.getId());
+        user3 = new User(3L, "user3", "user3@user.com");
+        itemRequest = new ItemRequest(1L, "item", user2.getId(), LocalDateTime.now());
+        itemRequest2 = new ItemRequest(2L, "item2", user3.getId(), LocalDateTime.now());
+        item = new Item(1L, "item", "description", true,
+                user.getId(), 1L);
+        item2 = new Item(2L, "item2", "description2", true,
+                user.getId(), 2L);
+        booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now(), 1L, 2L, Status.APPROVED);
+        booking2 = new Booking(2L, LocalDateTime.now(), LocalDateTime.now().plusHours(1), 2L, 3L, Status.APPROVED);
+        booking3 = new Booking(3L, LocalDateTime.now().plusHours(2), LocalDateTime.now().plusHours(3),
+                2L, 2L, Status.APPROVED);
+        booking4 = new Booking(4L, LocalDateTime.now().plusHours(2), LocalDateTime.now().plusHours(3),
+                1L, 3L, Status.APPROVED);
+        comment = new Comment(1L, "comment", 1L, 2L, LocalDateTime.now().plusMinutes(10));
+        comment2 = new Comment(2L, "comment2", 1L, 3L, LocalDateTime.now().plusHours(2));
     }
 
     @Test
@@ -101,6 +128,19 @@ class ItemServiceImpTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
+        when(userRepository.findById(3L)).thenReturn(Optional.of(user3));
+        List<Comment> comments = new ArrayList<>();
+        comments.add(comment);
+        comments.add(comment2);
+        when(commentRepository.findAllByItem(anyLong())).thenReturn(comments);
+        List<Booking> bookings = new ArrayList<>();
+        bookings.add(booking);
+        bookings.add(booking4);
+        when(bookingRepository.getAllBookingByUserCurrentByItem(anyLong(),anyLong())).thenReturn(bookings);
+        when(bookingRepository.getLastBooking(anyLong(), anyLong(), any(LocalDateTime.class))).thenReturn(booking);
+        when(bookingRepository.getNextBooking(anyLong(), anyLong(), any(LocalDateTime.class))).thenReturn(booking4);
 
         ItemResponseDtoWithComment itemResponse = itemService.getItem(item.getId(), user.getId());
 
@@ -108,6 +148,9 @@ class ItemServiceImpTest {
         assertEquals("description", itemResponse.getDescription());
         assertEquals(1, itemResponse.getOwner());
         assertEquals(1, itemResponse.getId());
+        assertEquals(2, itemResponse.getComments().size());
+        assertEquals(1, itemResponse.getLastBooking().getId());
+        assertEquals(4, itemResponse.getNextBooking().getId());
     }
 
     @Test
@@ -116,12 +159,20 @@ class ItemServiceImpTest {
         List<Item> itemList = new ArrayList<>();
         itemList.add(item);
         when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(itemRepository.findAllByOwner(anyLong(), any(PageRequest.class))).thenReturn(itemList);
+        List<Booking> bookings = new ArrayList<>();
+        bookings.add(booking);
+        bookings.add(booking4);
+        when(bookingRepository.getAllBookingByUserCurrentByItem(anyLong(),anyLong())).thenReturn(bookings);
+        when(bookingRepository.getLastBooking(anyLong(), anyLong(), any(LocalDateTime.class))).thenReturn(booking);
+        when(bookingRepository.getNextBooking(anyLong(), anyLong(), any(LocalDateTime.class))).thenReturn(booking4);
+        when(itemRepository.findAllByOwner(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl(itemList));
 
         List<ItemResponseDto> itemResponseDtoList = itemService.getItemsOwner(user.getId(), pageRequest);
 
         assertEquals(1, itemResponseDtoList.size());
         assertEquals(itemResponseDtoList.get(0).getOwner(), user.getId());
+        assertEquals(1, itemResponseDtoList.get(0).getLastBooking().getId());
+        assertEquals(4, itemResponseDtoList.get(0).getNextBooking().getId());
     }
 
     @Test
@@ -129,7 +180,7 @@ class ItemServiceImpTest {
         PageRequest pageRequest = PageRequest.of(5, 10, Sort.by("id"));
         List<Item> itemList = new ArrayList<>();
         itemList.add(item);
-        when(itemRepository.searchItem(anyString(), any(PageRequest.class))).thenReturn(itemList);
+        when(itemRepository.searchItem(anyString(), any(PageRequest.class))).thenReturn(new PageImpl(itemList));
 
         List<ItemDto> itemDtoList = itemService.searchItems("item", pageRequest);
 

@@ -2,6 +2,7 @@ package ru.practicum.shareit.requests.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.item.model.Item;
@@ -16,6 +17,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,7 +46,7 @@ class ItemRequestServiceImpTest {
         itemRequestService = new ItemRequestServiceImp(itemRequestRepository, userRepository, itemRepository);
         user = new User(1L, "user", "user@user.com");
         user2 = new User(2L, "user2", "user2@user.com");
-        item = new Item(1L, "item", "description", false, user.getId(), user2.getId());
+        item = new Item(1L, "item", "description", false, user.getId(), null);
         itemRequest = new ItemRequest(1, "request", user2.getId(), LocalDateTime.now());
     }
 
@@ -66,7 +68,7 @@ class ItemRequestServiceImpTest {
         List<Item> itemList = new ArrayList<>();
         itemList.add(item);
         when(itemRepository.findAllByRequestId(anyLong())).thenReturn(itemList);
-        when(itemRequestRepository.findById(anyLong())).thenReturn(itemRequest);
+        when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(itemRequest));
 
         ItemRequestReturnDto itemRequestDtoTest = itemRequestService.getItemRequestById(itemRequest.getId(), user2.getId());
 
@@ -105,7 +107,7 @@ class ItemRequestServiceImpTest {
         when(itemRepository.findAllByRequestId(anyLong())).thenReturn(itemList);
         List<ItemRequest> itemRequestList = new ArrayList<>();
         itemRequestList.add(itemRequest2);
-        when(itemRequestRepository.findAllRequests(anyLong(), any(PageRequest.class))).thenReturn(itemRequestList);
+        when(itemRequestRepository.findAllRequests(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl(itemRequestList));
 
         PageRequest pageRequest = PageRequest.of(5, 10, Sort.by("id"));
 

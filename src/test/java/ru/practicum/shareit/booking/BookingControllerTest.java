@@ -55,7 +55,7 @@ class BookingControllerTest {
     void setUp() {
         user = new User(1L, "user", "user@user.com");
         user2 = new User(2L, "user2", "user2@user.com");
-        item = new Item(1L, "item", "description", false, user.getId(), user2.getId());
+        item = new Item(1L, "item", "description", false, user.getId(), null);
         booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
                 item.getId(), user2.getId(), Status.WAITING);
         bookingResponseDto = toBookingDtoForReturn(booking,

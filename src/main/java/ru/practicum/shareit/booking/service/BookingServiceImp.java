@@ -101,22 +101,22 @@ public class BookingServiceImp implements BookingService {
         List<Booking> bookingList;
         switch (state) {
             case ALL:
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, pageRequest);
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, pageRequest).toList();
                 break;
             case CURRENT:
-                bookingList = bookingRepository.getAllBookingCurrent(bookerId, LocalDateTime.now(), pageRequest);
+                bookingList = bookingRepository.getAllBookingCurrent(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case PAST:
-                bookingList = bookingRepository.getAllBookingPast(bookerId, LocalDateTime.now(), pageRequest);
+                bookingList = bookingRepository.getAllBookingPast(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case FUTURE:
-                bookingList = bookingRepository.getAllBookingFuture(bookerId, LocalDateTime.now(), pageRequest);
+                bookingList = bookingRepository.getAllBookingFuture(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case WAITING:
-                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.WAITING, pageRequest);
+                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.WAITING, pageRequest).toList();
                 break;
             case REJECTED:
-                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.REJECTED, pageRequest);
+                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.REJECTED, pageRequest).toList();
                 break;
             default:
                 log.warn("Не корректный параметр поиска");
@@ -132,22 +132,22 @@ public class BookingServiceImp implements BookingService {
         List<Booking> bookingList;
         switch (state) {
             case ALL:
-                bookingList = bookingRepository.getAllBookingByUserId(userId, pageRequest);
+                bookingList = bookingRepository.getAllBookingByUserId(userId, pageRequest).toList();
                 break;
             case CURRENT:
-                bookingList = bookingRepository.getAllBookingByUserCurrent(userId, LocalDateTime.now(), pageRequest);
+                bookingList = bookingRepository.getAllBookingByUserCurrent(userId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case PAST:
-                bookingList = bookingRepository.getAllBookingByUserPast(userId, LocalDateTime.now(), pageRequest);
+                bookingList = bookingRepository.getAllBookingByUserPast(userId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case FUTURE:
-                bookingList = bookingRepository.getAllBookingByUserFuture(userId, LocalDateTime.now(), pageRequest);
+                bookingList = bookingRepository.getAllBookingByUserFuture(userId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case WAITING:
-                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.WAITING, pageRequest);
+                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.WAITING, pageRequest).toList();
                 break;
             case REJECTED:
-                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.REJECTED, pageRequest);
+                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.REJECTED, pageRequest).toList();
                 break;
             default:
                 log.warn("Не корректный параметр поиска");

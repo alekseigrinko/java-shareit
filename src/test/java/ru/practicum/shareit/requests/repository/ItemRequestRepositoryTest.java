@@ -57,11 +57,11 @@ class ItemRequestRepositoryTest {
 
     @Test
     void findAllRequests() {
-        PageRequest pageRequest = PageRequest.of(1, 10, Sort.by("id"));
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("id"));
 
         Page<ItemRequest> itemRequestPage = itemRequestRepository.findAllRequests(user.getId(), pageRequest);
 
-        assertNotNull(itemRequestPage);
-        assertEquals(2, itemRequestPage.getTotalElements());
+        assertEquals(2, itemRequestPage.getContent().size());
+        assertEquals(1, itemRequestPage.getContent().get(0).getId());
     }
 }

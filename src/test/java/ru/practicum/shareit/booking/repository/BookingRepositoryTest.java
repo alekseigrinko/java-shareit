@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.Status;
@@ -67,42 +70,92 @@ class BookingRepositoryTest {
 
     @Test
     void findAllByBookerIdOrderByStartDesc() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(2L, pageRequest);
+        assertEquals(2, bookings.getContent().size());
+        assertEquals(2, bookings.getContent().get(0).getItemId());
+        assertEquals(1, bookings.getContent().get(1).getId());
     }
 
     @Test
     void getAllBookingPast() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.getAllBookingPast(2L, LocalDateTime.now(), pageRequest);
+        assertEquals(1, bookings.getContent().size());
+        assertEquals(1, bookings.getContent().get(0).getItemId());
+        assertEquals(1, bookings.getContent().get(0).getId());
     }
 
     @Test
     void getAllBookingCurrent() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.getAllBookingCurrent(3L, LocalDateTime.now(), pageRequest);
+        assertEquals(1, bookings.getContent().size());
+        assertEquals(2, bookings.getContent().get(0).getItemId());
+        assertEquals(2, bookings.getContent().get(0).getId());
     }
 
     @Test
     void getAllBookingFuture() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.getAllBookingFuture(3L, LocalDateTime.now(), pageRequest);
+        assertEquals(1, bookings.getContent().size());
+        assertEquals(1, bookings.getContent().get(0).getItemId());
+        assertEquals(4, bookings.getContent().get(0).getId());
     }
 
     @Test
     void getAllBookingByStatus() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.getAllBookingByStatus(3L, Status.APPROVED, pageRequest);
+        assertEquals(2, bookings.getContent().size());
+        assertEquals(1, bookings.getContent().get(0).getItemId());
+        assertEquals(2, bookings.getContent().get(1).getId());
     }
 
     @Test
     void getAllBookingByUserPast() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.getAllBookingByUserPast(1L, LocalDateTime.now(), pageRequest);
+        assertEquals(1, bookings.getContent().size());
+        assertEquals(1, bookings.getContent().get(0).getItemId());
+        assertEquals(1, bookings.getContent().get(0).getId());
     }
 
     @Test
     void getAllBookingByUserCurrent() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.getAllBookingByUserCurrent(1L, LocalDateTime.now(), pageRequest);
+        assertEquals(1, bookings.getContent().size());
+        assertEquals(2, bookings.getContent().get(0).getItemId());
+        assertEquals(2, bookings.getContent().get(0).getId());
     }
 
     @Test
     void getAllBookingByUserFuture() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.getAllBookingByUserFuture(1L, LocalDateTime.now(), pageRequest);
+        assertEquals(2, bookings.getContent().size());
+        assertEquals(1, bookings.getContent().get(0).getItemId());
+        assertEquals(3, bookings.getContent().get(1).getId());
     }
 
     @Test
     void getAllBookingByUserByStatus() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.getAllBookingByUserByStatus(1L, Status.APPROVED, pageRequest);
+        assertEquals(4, bookings.getContent().size());
+        assertEquals(1, bookings.getContent().get(0).getItemId());
+        assertEquals(1, bookings.getContent().get(3).getId());
     }
 
     @Test
     void getAllBookingByUserId() {
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
+        Page<Booking> bookings = bookingRepository.getAllBookingByUserId(1L, pageRequest);
+        assertEquals(4, bookings.getContent().size());
+        assertEquals(1, bookings.getContent().get(0).getItemId());
+        assertEquals(1, bookings.getContent().get(3).getId());
     }
 
     @Test

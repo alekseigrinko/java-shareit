@@ -149,7 +149,6 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", user2.getId())
                         .param("state", "ALL"))
-
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(bookingResponseDto.getId()), Long.class))
@@ -178,7 +177,6 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", user.getId())
                         .param("state", "ALL"))
-
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(bookingResponseDto.getId()), Long.class))
@@ -190,5 +188,34 @@ class BookingControllerTest {
 
         verify(bookingService, times(1))
                 .getAllBookingByUser(anyLong(), any(State.class), any(PageRequest.class));
+    }
+
+    @Test
+    void checkStateTest() throws Exception {
+        List<BookingResponseDto> bookingTestList = new ArrayList<>();
+        bookingResponseDto.setStatus(Status.APPROVED);
+        bookingTestList.add(bookingResponseDto);
+
+        when(bookingService.getAllBookingByBooker(anyLong(), any(State.class), any(PageRequest.class))).thenReturn(bookingTestList);
+
+        mockMvc.perform(get("/bookings/")
+                        .content(mapper.writeValueAsString(bookingResponseDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", user2.getId())
+                        .param("state", "UNKNOWN"))
+                .andExpect(status().isBadRequest());
+
+        when(bookingService.getAllBookingByUser(anyLong(), any(State.class), any(PageRequest.class))).thenReturn(bookingTestList);
+
+        mockMvc.perform(get("/bookings/owner")
+                        .content(mapper.writeValueAsString(bookingResponseDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", user.getId())
+                        .param("state", "UNKNOWN"))
+                .andExpect(status().isBadRequest());
     }
 }

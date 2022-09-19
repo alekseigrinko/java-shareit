@@ -42,7 +42,6 @@ public class ItemController {
         return itemService.deleteItem(itemId, userId);
     }
 
-
     @GetMapping("/{itemId}")
     ItemResponseDtoWithComment getItem(@PathVariable long itemId,
                                        @RequestHeader("X-Sharer-User-Id") long userId) {

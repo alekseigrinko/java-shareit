@@ -53,24 +53,24 @@ class ItemRepositoryTest {
 
     @Test
     void findAllByOwner() {
-        PageRequest pageRequest = PageRequest.of(1, 10, Sort.by("id"));
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("id"));
         Page<Item> itemPage = itemRepository.findAllByOwner(user.getId(), pageRequest);
         System.out.println(itemPage);
         System.out.println(itemPage.stream().collect(Collectors.toList()));
         assertNotNull(itemPage);
-        assertEquals(2, itemPage.getTotalElements());
-        /*assertEquals("item", itemPage.getContent().get(0).getName());*/
-        /*assertEquals(1L, itemPage.getContent().get(0).getId());*/
+        assertEquals(2, itemPage.getContent().size());
+        assertEquals("item", itemPage.getContent().get(0).getName());
+        assertEquals(1L, itemPage.getContent().get(0).getId());
     }
 
     @Test
     void searchItem() {
-        PageRequest pageRequest = PageRequest.of(1, 10, Sort.by("id"));
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("id"));
         Page<Item> itemPage = itemRepository.searchItem("description", pageRequest);
         assertNotNull(itemPage);
-        assertEquals(2, itemPage.getTotalElements());
-        /*assertEquals("item", itemPage.getContent().get(0).getName());
-        assertEquals(1L, itemPage.getContent().get(0).getId());*/
+        assertEquals(2, itemPage.getContent().size());
+        assertEquals("item", itemPage.getContent().get(0).getName());
+        assertEquals(1L, itemPage.getContent().get(0).getId());
     }
 
     @Test

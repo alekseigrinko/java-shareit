@@ -13,7 +13,6 @@ import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exeption.BadRequestException;
 import ru.practicum.shareit.exeption.ObjectNotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -31,7 +30,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static ru.practicum.shareit.booking.BookingMapping.toBooking;
 import static ru.practicum.shareit.booking.BookingMapping.toBookingDtoForReturn;
-import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDto;
 import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDtoForReturnByBooking;
 import static ru.practicum.shareit.user.UserMapper.toUserDtoForReturnByBooker;
 

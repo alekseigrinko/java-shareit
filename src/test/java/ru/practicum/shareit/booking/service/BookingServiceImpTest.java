@@ -114,18 +114,93 @@ class BookingServiceImpTest {
 
     @Test
     void getAllBookingByBooker() {
-        PageRequest pageRequest = PageRequest.of(5, 10, Sort.by("id"));
+        item = new Item(1L, "item", "description", true, user.getId(), 1L);
+        Booking booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now(),
+                1L, 2L, Status.APPROVED);
+        Booking booking2 = new Booking(2L, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15),
+                1L, 2L, Status.APPROVED);
+        Booking booking3 = new Booking(3L, LocalDateTime.now().plusHours(2), LocalDateTime.now().plusHours(3),
+                1L, 2L, Status.APPROVED);
+
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
         List<Booking> bookingList = new ArrayList<>();
-        bookingList.add(toBooking(bookingDto));
+        bookingList.add(booking);
+        bookingList.add(booking2);
+        bookingList.add(booking3);
 
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+        when(bookingRepository.findById(2L)).thenReturn(Optional.of(booking2));
+        when(bookingRepository.findById(3L)).thenReturn(Optional.of(booking3));
         when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl(bookingList));
 
-        List<BookingResponseDto> bookingDtoTestList = bookingService.getAllBookingByBooker(user2.getId(),
+        List<BookingResponseDto> bookingDtoTestList = bookingService.getAllBookingByBooker(user.getId(),
                 State.ALL, pageRequest);
+
+        assertEquals(3, bookingDtoTestList.size());
+        assertEquals(1, bookingDtoTestList.get(0).getId());
+        assertEquals(1, bookingDtoTestList.get(0).getItem().getOwner().getId());
+
+        bookingList.clear();
+        bookingList.add(booking2);
+
+        when(bookingRepository.getAllBookingCurrent(anyLong(), any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByBooker(user.getId(),State.CURRENT, pageRequest);
+
+        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(2, bookingDtoTestList.get(0).getId());
+        assertEquals(2, bookingDtoTestList.get(0).getBooker().getId());
+
+        bookingList.clear();
+        bookingList.add(booking);
+
+        when(bookingRepository.getAllBookingPast(anyLong(), any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByBooker(user.getId(),State.PAST, pageRequest);
+
+        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(1, bookingDtoTestList.get(0).getId());
+        assertEquals(2, bookingDtoTestList.get(0).getBooker().getId());
+
+        bookingList.clear();
+        bookingList.add(booking3);
+
+        when(bookingRepository.getAllBookingFuture(anyLong(), any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByBooker(user.getId(),State.FUTURE, pageRequest);
+
+        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(3, bookingDtoTestList.get(0).getId());
+        assertEquals(2, bookingDtoTestList.get(0).getBooker().getId());
+
+        bookingList.clear();
+        booking3.setStatus(Status.WAITING);
+        bookingList.add(booking3);
+
+        when(bookingRepository.getAllBookingByStatus(anyLong(), any(Status.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByBooker(user.getId(),State.WAITING, pageRequest);
+
+        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(3, bookingDtoTestList.get(0).getId());
+        assertEquals(2, bookingDtoTestList.get(0).getBooker().getId());
+
+        bookingList.clear();
+        booking.setStatus(Status.REJECTED);
+        bookingList.add(booking);
+
+        when(bookingRepository.getAllBookingByStatus(anyLong(), any(Status.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByBooker(user.getId(),State.REJECTED, pageRequest);
 
         assertEquals(1, bookingDtoTestList.size());
         assertEquals(1, bookingDtoTestList.get(0).getId());
@@ -134,22 +209,99 @@ class BookingServiceImpTest {
 
     @Test
     void getAllBookingByUser() {
-        PageRequest pageRequest = PageRequest.of(5, 10, Sort.by("id"));
+        User user3 = new User(3L, "user3", "user3@user.com");
+        item = new Item(1L, "item", "description", true, user.getId(), 1L);
+        Booking booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now(),
+                1L, 2L, Status.APPROVED);
+        Booking booking2 = new Booking(2L, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15),
+                1L, 2L, Status.APPROVED);
+        Booking booking3 = new Booking(3L, LocalDateTime.now().plusHours(2), LocalDateTime.now().plusHours(3),
+                1L, 3L, Status.APPROVED);
+
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
         List<Booking> bookingList = new ArrayList<>();
-        bookingList.add(toBooking(bookingDto));
+        bookingList.add(booking);
+        bookingList.add(booking2);
+        bookingList.add(booking3);
 
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
+        when(userRepository.findById(3L)).thenReturn(Optional.of(user3));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+        when(bookingRepository.findById(2L)).thenReturn(Optional.of(booking2));
+        when(bookingRepository.findById(3L)).thenReturn(Optional.of(booking3));
         when(bookingRepository.getAllBookingByUserId(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl(bookingList));
 
         List<BookingResponseDto> bookingDtoTestList = bookingService.getAllBookingByUser(user.getId(),
                 State.ALL, pageRequest);
 
-        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(3, bookingDtoTestList.size());
         assertEquals(1, bookingDtoTestList.get(0).getId());
         assertEquals(1, bookingDtoTestList.get(0).getItem().getOwner().getId());
+
+        bookingList.clear();
+        bookingList.add(booking2);
+
+        when(bookingRepository.getAllBookingByUserCurrent(anyLong(), any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByUser(user.getId(),State.CURRENT, pageRequest);
+
+        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(2, bookingDtoTestList.get(0).getId());
+        assertEquals(2, bookingDtoTestList.get(0).getBooker().getId());
+
+        bookingList.clear();
+        bookingList.add(booking);
+
+        when(bookingRepository.getAllBookingByUserPast(anyLong(), any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByUser(user.getId(),State.PAST, pageRequest);
+
+        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(1, bookingDtoTestList.get(0).getId());
+        assertEquals(2, bookingDtoTestList.get(0).getBooker().getId());
+
+        bookingList.clear();
+        bookingList.add(booking3);
+
+        when(bookingRepository.getAllBookingByUserFuture(anyLong(), any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByUser(user.getId(),State.FUTURE, pageRequest);
+
+        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(3, bookingDtoTestList.get(0).getId());
+        assertEquals(3, bookingDtoTestList.get(0).getBooker().getId());
+
+        bookingList.clear();
+        booking3.setStatus(Status.WAITING);
+        bookingList.add(booking3);
+
+        when(bookingRepository.getAllBookingByUserByStatus(anyLong(), any(Status.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByUser(user.getId(),State.WAITING, pageRequest);
+
+        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(3, bookingDtoTestList.get(0).getId());
+        assertEquals(3, bookingDtoTestList.get(0).getBooker().getId());
+
+        bookingList.clear();
+        booking.setStatus(Status.REJECTED);
+        bookingList.add(booking);
+
+        when(bookingRepository.getAllBookingByUserByStatus(anyLong(), any(Status.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl(bookingList));
+
+        bookingDtoTestList = bookingService.getAllBookingByUser(user.getId(),State.REJECTED, pageRequest);
+
+        assertEquals(1, bookingDtoTestList.size());
+        assertEquals(1, bookingDtoTestList.get(0).getId());
+        assertEquals(2, bookingDtoTestList.get(0).getBooker().getId());
     }
 
     @Test

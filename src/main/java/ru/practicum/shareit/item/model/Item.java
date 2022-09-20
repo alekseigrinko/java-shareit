@@ -11,22 +11,22 @@ import javax.validation.constraints.NotNull;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ITEMS")
+@Table(name = "items")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
     @NotBlank
-    @Column(name = "DESCRIPTION")
+    @Column(name = "description")
     private String description;
     @NotNull
-    @Column(name = "IS_AVAILABLE")
+    @Column(name = "is_available")
     private Boolean available;
-    @Column(name = "OWNER_ID")
+    @Column(name = "owner_id")
     private Long owner;
-    @Column(name = "REQUEST_ID")
+    @Column(name = "request_id")
     private Long requestId;
 }

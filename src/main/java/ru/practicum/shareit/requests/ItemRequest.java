@@ -13,15 +13,15 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ITEM_REQUESTS")
+@Table(name = "item_requests")
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "DESCRIPTION")
+    @Column(name = "description")
     private String description;
-    @Column(name = "REQUESTER_ID")
+    @Column(name = "requester_id")
     private long requester;
-    @Column(name = "CREATED")
+    @Column(name = "created")
     private LocalDateTime created;
 }

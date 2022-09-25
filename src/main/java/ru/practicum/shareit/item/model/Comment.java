@@ -13,17 +13,17 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "COMMENTS")
+@Table(name = "comments")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "TEXT")
+    @Column(name = "text")
     private String text;
-    @Column(name = "ITEM_ID")
+    @Column(name = "item_id")
     private long item;
-    @Column(name = "AUTHOR_ID")
+    @Column(name = "author_id")
     private long author;
-    @Column(name = "CREATED")
+    @Column(name = "created")
     LocalDateTime created;
 }

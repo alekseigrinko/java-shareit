@@ -13,20 +13,20 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "BOOKINGS")
+@Table(name = "bookings")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "START_DATE")
+    @Column(name = "start_date")
     private LocalDateTime start;
-    @Column(name = "END_DATE")
+    @Column(name = "end_date")
     private LocalDateTime end;
-    @Column(name = "ITEM_ID")
+    @Column(name = "item_id")
     private long itemId;
-    @Column(name = "BOOKER_ID")
+    @Column(name = "booker_id")
     private long bookerId;
     @Enumerated
-    @Column(name = "STATUS")
+    @Column(name = "status")
     private Status status;
 }

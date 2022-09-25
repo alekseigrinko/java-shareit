@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommentResponseDtoForItem {
     private long id;
-    @NotBlank(message = "Пустой комментарий")
     private String text;
     private String authorName;
     LocalDateTime create;

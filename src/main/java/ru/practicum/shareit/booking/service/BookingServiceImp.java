@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.State;
@@ -94,64 +95,65 @@ public class BookingServiceImp implements BookingService {
     }
 
     @Override
-    public List<BookingResponseDto> getAllBookingByBooker(long bookerId, State state) {
+
+    public List<BookingResponseDto> getAllBookingByBooker(long bookerId, State state, PageRequest pageRequest) {
         checkUser(bookerId);
         List<Booking> bookingList;
         switch (state) {
             case ALL:
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, pageRequest).toList();
                 break;
             case CURRENT:
-                bookingList = bookingRepository.getAllBookingCurrent(bookerId, LocalDateTime.now());
+                bookingList = bookingRepository.getAllBookingCurrent(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case PAST:
-                bookingList = bookingRepository.getAllBookingPast(bookerId, LocalDateTime.now());
+                bookingList = bookingRepository.getAllBookingPast(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case FUTURE:
-                bookingList = bookingRepository.getAllBookingFuture(bookerId, LocalDateTime.now());
+                bookingList = bookingRepository.getAllBookingFuture(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case WAITING:
-                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.WAITING);
+                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.WAITING, pageRequest).toList();
                 break;
             case REJECTED:
-                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.REJECTED);
+                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.REJECTED, pageRequest).toList();
                 break;
             default:
                 log.warn("Не корректный параметр поиска");
                 throw new BadRequestException("Unknown state: " + state);
         }
-        log.debug("Список по параметру " + state + "предоставлен");
+        log.debug("Список по параметру " + state + " предоставлен");
         return bookingListToDto(bookingList);
     }
 
     @Override
-    public List<BookingResponseDto> getAllBookingByUser(long userId, State state) {
+    public List<BookingResponseDto> getAllBookingByUser(long userId, State state, PageRequest pageRequest) {
         checkUser(userId);
         List<Booking> bookingList;
         switch (state) {
             case ALL:
-                bookingList = bookingRepository.getAllBookingByUserId(userId);
+                bookingList = bookingRepository.getAllBookingByUserId(userId, pageRequest).toList();
                 break;
             case CURRENT:
-                bookingList = bookingRepository.getAllBookingByUserCurrent(userId, LocalDateTime.now());
+                bookingList = bookingRepository.getAllBookingByUserCurrent(userId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case PAST:
-                bookingList = bookingRepository.getAllBookingByUserPast(userId, LocalDateTime.now());
+                bookingList = bookingRepository.getAllBookingByUserPast(userId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case FUTURE:
-                bookingList = bookingRepository.getAllBookingByUserFuture(userId, LocalDateTime.now());
+                bookingList = bookingRepository.getAllBookingByUserFuture(userId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case WAITING:
-                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.WAITING);
+                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.WAITING, pageRequest).toList();
                 break;
             case REJECTED:
-                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.REJECTED);
+                bookingList = bookingRepository.getAllBookingByUserByStatus(userId, Status.REJECTED, pageRequest).toList();
                 break;
             default:
                 log.warn("Не корректный параметр поиска");
                 throw new BadRequestException("Unknown state: " + state);
         }
-        log.debug("Список по параметру " + state + "предоставлен");
+        log.debug("Список по параметру " + state + " предоставлен");
         return bookingListToDto(bookingList);
     }
 

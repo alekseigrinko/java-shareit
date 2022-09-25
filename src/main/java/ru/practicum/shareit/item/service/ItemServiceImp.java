@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.Status;
@@ -90,10 +91,10 @@ public class ItemServiceImp implements ItemService {
     }
 
     @Override
-    public List<ItemResponseDto> getItemsOwner(long userId) {
+    public List<ItemResponseDto> getItemsOwner(long userId, PageRequest pageRequest) {
         checkUser(userId);
         List<ItemResponseDto> itemList = new ArrayList<>();
-        for (Item item: itemRepository.findAllByOwner(userId)) {
+        for (Item item: itemRepository.findAllByOwner(userId,pageRequest)) {
             itemList.add(updateBookingByItem(item, userId, userId));
 
         }
@@ -102,12 +103,12 @@ public class ItemServiceImp implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String text) {
+    public List<ItemDto> searchItems(String text, PageRequest pageRequest) {
         if (text.isBlank()) {
             log.debug("Условие поиска не задано");
             return new ArrayList<>();
         }
-        return itemRepository.searchItem(text).stream()
+        return itemRepository.searchItem(text, pageRequest).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }

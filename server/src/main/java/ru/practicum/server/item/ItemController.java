@@ -37,7 +37,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    String deleteItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    ItemDto deleteItem(@RequestHeader("X-Sharer-User-Id") long userId,
                       @PathVariable long itemId) {
         return itemService.deleteItem(itemId, userId);
     }
@@ -63,6 +63,7 @@ public class ItemController {
                               @RequestParam(value = "size", defaultValue = "10") int size) {
         int page = from / size;
         final PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id"));
+        System.out.println(text);
         return itemService.searchItems(text, pageRequest);
     }
 

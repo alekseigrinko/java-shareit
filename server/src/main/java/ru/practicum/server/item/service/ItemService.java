@@ -14,7 +14,7 @@ public interface ItemService {
 
     ItemDto updateItem(long itemId, long userId, ItemDto itemDto);
 
-    String deleteItem(long itemId, long userId);
+    ItemDto deleteItem(long itemId, long userId);
 
     ItemResponseDtoWithComment getItem(long itemId, long userId);
 

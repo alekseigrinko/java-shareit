@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import ru.practicum.server.exeption.ObjectNotFoundException;
 import ru.practicum.server.booking.Booking;
 import ru.practicum.server.booking.Status;
 import ru.practicum.server.booking.repository.BookingRepository;
 import ru.practicum.server.exeption.BadRequestException;
-import ru.practicum.server.exeption.ObjectNotFoundException;
 import ru.practicum.server.item.dto.CommentDto;
 import ru.practicum.server.item.dto.ItemDto;
 import ru.practicum.server.item.dto.ItemResponseDto;
@@ -120,9 +120,9 @@ class ItemServiceImpTest {
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
 
-        String response = itemService.deleteItem(item.getId(), user.getId());
+        ItemDto response = itemService.deleteItem(item.getId(), user.getId());
 
-        assertEquals("Объект ID: " + item.getId() + ", удален", response);
+        assertEquals(response.getId(), item.getId());
     }
 
     @Test

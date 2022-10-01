@@ -1,5 +1,6 @@
 package ru.practicum.server.requests.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
@@ -10,6 +11,7 @@ import ru.practicum.server.exeption.ObjectNotFoundException;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.repository.ItemRepository;
 import ru.practicum.server.requests.ItemRequest;
+import ru.practicum.server.requests.ItemRequestMapper;
 import ru.practicum.server.requests.dto.ItemRequestDto;
 import ru.practicum.server.requests.dto.ItemRequestReturnDto;
 import ru.practicum.server.requests.repository.ItemRequestRepository;
@@ -26,7 +28,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static ru.practicum.server.requests.ItemRequestMapper.toItemRequestDto;
 
 class ItemRequestServiceImpTest {
 
@@ -57,7 +58,7 @@ class ItemRequestServiceImpTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.save(any(ItemRequest.class))).thenReturn(itemRequest);
 
-        ItemRequestDto itemRequestDtoTest = itemRequestService.create(user2.getId(), toItemRequestDto(itemRequest));
+        ItemRequestDto itemRequestDtoTest = itemRequestService.create(user2.getId(), ItemRequestMapper.toItemRequestDto(itemRequest));
 
         assertEquals("request", itemRequestDtoTest.getDescription());
         assertEquals(2, itemRequestDtoTest.getRequester());
@@ -76,7 +77,7 @@ class ItemRequestServiceImpTest {
 
         assertEquals("request", itemRequestDtoTest.getDescription());
         assertEquals(2, itemRequestDtoTest.getRequester());
-        assertEquals(1, itemRequestDtoTest.getItems().get(0).getId());
+        Assertions.assertEquals(1, itemRequestDtoTest.getItems().get(0).getId());
     }
 
     @Test
@@ -94,7 +95,7 @@ class ItemRequestServiceImpTest {
 
         assertEquals(1, itemRequestListTest.size());
         assertEquals(2, itemRequestListTest.get(0).getRequester());
-        assertEquals(1, itemRequestListTest.get(0).getItems().get(0).getId());
+        Assertions.assertEquals(1, itemRequestListTest.get(0).getItems().get(0).getId());
     }
 
     @Test
@@ -117,7 +118,7 @@ class ItemRequestServiceImpTest {
 
         assertEquals(1, itemRequestListTest.size());
         assertEquals(3, itemRequestListTest.get(0).getRequester());
-        assertEquals(1, itemRequestListTest.get(0).getItems().get(0).getId());
+        Assertions.assertEquals(1, itemRequestListTest.get(0).getItems().get(0).getId());
     }
 
     @Test
@@ -125,7 +126,7 @@ class ItemRequestServiceImpTest {
         when(userRepository.existsById(anyLong())).thenReturn(false);
 
         final ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
-            ItemRequestDto itemRequestDtoTest = itemRequestService.create(5L, toItemRequestDto(itemRequest));
+            ItemRequestDto itemRequestDtoTest = itemRequestService.create(5L, ItemRequestMapper.toItemRequestDto(itemRequest));
         });
 
         assertEquals("Пользователь ID: " + 5 + ", не найден!", thrown.getMessage());

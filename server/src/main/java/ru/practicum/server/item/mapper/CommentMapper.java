@@ -1,9 +1,9 @@
 package ru.practicum.server.item.mapper;
 
+import ru.practicum.server.item.model.Comment;
 import ru.practicum.server.booking.dto.BookingResponseDto;
 import ru.practicum.server.item.dto.CommentDto;
 import ru.practicum.server.item.dto.CommentResponseDtoForItem;
-import ru.practicum.server.item.model.Comment;
 
 public class CommentMapper {
     public static Comment toComment(CommentDto commentDto, long authorId) {

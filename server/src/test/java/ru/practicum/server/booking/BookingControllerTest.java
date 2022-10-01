@@ -10,10 +10,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.server.item.mapper.ItemMapper;
+import ru.practicum.server.item.model.Item;
 import ru.practicum.server.booking.dto.BookingDto;
 import ru.practicum.server.booking.dto.BookingResponseDto;
 import ru.practicum.server.booking.service.BookingService;
-import ru.practicum.server.item.model.Item;
 import ru.practicum.server.user.model.User;
 
 import java.nio.charset.StandardCharsets;
@@ -29,7 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.practicum.server.booking.BookingMapping.toBookingDtoForReturn;
-import static ru.practicum.server.item.mapper.ItemMapper.*;
 import static ru.practicum.server.user.UserMapper.toUserDtoForReturnByBooker;
 
 @WebMvcTest(controllers = BookingController.class)
@@ -59,7 +59,7 @@ class BookingControllerTest {
         booking = new Booking(1L, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
                 item.getId(), user2.getId(), Status.WAITING);
         bookingResponseDto = toBookingDtoForReturn(booking,
-                toItemDtoForReturnByBooking(item, toUserDtoForReturnByBooker(user)),
+                ItemMapper.toItemDtoForReturnByBooking(item, toUserDtoForReturnByBooker(user)),
                 toUserDtoForReturnByBooker(user2));
     }
 

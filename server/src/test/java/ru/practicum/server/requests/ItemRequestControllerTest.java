@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.server.item.dto.ItemDto;
+import ru.practicum.server.item.mapper.ItemMapper;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.requests.dto.ItemRequestDto;
 import ru.practicum.server.requests.dto.ItemRequestReturnDto;
@@ -29,9 +30,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.practicum.server.item.mapper.ItemMapper.*;
-import static ru.practicum.server.requests.ItemRequestMapper.toItemRequestDto;
-import static ru.practicum.server.requests.ItemRequestMapper.toItemRequestReturnDto;
 
 @WebMvcTest(controllers = ItemRequestController.class)
 @AutoConfigureMockMvc
@@ -61,10 +59,10 @@ class ItemRequestControllerTest {
 
     @Test
     void createItemRequest() throws Exception {
-        when(itemRequestService.create(anyLong(), any(ItemRequestDto.class))).thenReturn(toItemRequestDto(itemRequest));
+        when(itemRequestService.create(anyLong(), any(ItemRequestDto.class))).thenReturn(ItemRequestMapper.toItemRequestDto(itemRequest));
 
         mockMvc.perform(post("/requests")
-                        .content(mapper.writeValueAsString(toItemRequestDto(itemRequest)))
+                        .content(mapper.writeValueAsString(ItemRequestMapper.toItemRequestDto(itemRequest)))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -81,14 +79,14 @@ class ItemRequestControllerTest {
     @Test
     void getAllUserRequests() throws Exception {
         List<ItemDto> itemDtoList = new ArrayList<>();
-        itemDtoList.add(toItemDto(item));
+        itemDtoList.add(ItemMapper.toItemDto(item));
         List<ItemRequestReturnDto> itemRequestReturnDtoList = new ArrayList<>();
-        itemRequestReturnDtoList.add(toItemRequestReturnDto(itemRequest, itemDtoList));
+        itemRequestReturnDtoList.add(ItemRequestMapper.toItemRequestReturnDto(itemRequest, itemDtoList));
 
         when(itemRequestService.getAllUserRequests(anyLong())).thenReturn(itemRequestReturnDtoList);
 
         mockMvc.perform(get("/requests")
-                        .content(mapper.writeValueAsString(toItemRequestDto(itemRequest)))
+                        .content(mapper.writeValueAsString(ItemRequestMapper.toItemRequestDto(itemRequest)))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -107,13 +105,13 @@ class ItemRequestControllerTest {
     void getItemRequestById() throws Exception {
         long pathVariable = 1;
         List<ItemDto> itemDtoList = new ArrayList<>();
-        itemDtoList.add(toItemDto(item));
-        ItemRequestReturnDto itemRequestReturnDto = toItemRequestReturnDto(itemRequest, itemDtoList);
+        itemDtoList.add(ItemMapper.toItemDto(item));
+        ItemRequestReturnDto itemRequestReturnDto = ItemRequestMapper.toItemRequestReturnDto(itemRequest, itemDtoList);
 
         when(itemRequestService.getItemRequestById(anyLong(), anyLong())).thenReturn(itemRequestReturnDto);
 
         mockMvc.perform(get("/requests/" + pathVariable)
-                        .content(mapper.writeValueAsString(toItemRequestDto(itemRequest)))
+                        .content(mapper.writeValueAsString(ItemRequestMapper.toItemRequestDto(itemRequest)))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -130,14 +128,14 @@ class ItemRequestControllerTest {
     @Test
     void getAllRequests() throws Exception {
         List<ItemDto> itemDtoList = new ArrayList<>();
-        itemDtoList.add(toItemDto(item));
+        itemDtoList.add(ItemMapper.toItemDto(item));
         List<ItemRequestReturnDto> itemRequestReturnDtoList = new ArrayList<>();
-        itemRequestReturnDtoList.add(toItemRequestReturnDto(itemRequest, itemDtoList));
+        itemRequestReturnDtoList.add(ItemRequestMapper.toItemRequestReturnDto(itemRequest, itemDtoList));
 
         when(itemRequestService.getAllRequests(any(PageRequest.class), anyLong())).thenReturn(itemRequestReturnDtoList);
 
         mockMvc.perform(get("/requests/all")
-                        .content(mapper.writeValueAsString(toItemRequestDto(itemRequest)))
+                        .content(mapper.writeValueAsString(ItemRequestMapper.toItemRequestDto(itemRequest)))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

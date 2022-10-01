@@ -11,9 +11,6 @@ import ru.practicum.server.user.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.server.user.UserMapper.toUser;
-import static ru.practicum.server.user.UserMapper.toUserDto;
-
 @Service
 @Slf4j
 public class UserServiceImp implements UserService {
@@ -26,7 +23,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserDto addUser(UserDto userDto) {
-        return toUserDto(userRepository.save(toUser(userDto)));
+        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
     @Override
@@ -40,7 +37,7 @@ public class UserServiceImp implements UserService {
             userInMemory.setEmail(userDto.getEmail());
         }
         log.debug("Данные пользователя обновлены: " + userInMemory);
-        return toUserDto(userRepository.save(userInMemory));
+        return UserMapper.toUserDto(userRepository.save(userInMemory));
     }
 
     @Override
@@ -53,13 +50,14 @@ public class UserServiceImp implements UserService {
     @Override
     public UserDto getUser(long userId) {
         checkUser(userId);
-        return toUserDto(userRepository.findById(userId).get());
+        return UserMapper.toUserDto(userRepository.findById(userId).get());
     }
 
     @Override
-    public String deleteUser(long userId) {
+    public UserDto deleteUser(long userId) {
+        UserDto userDto = UserMapper.toUserDto(userRepository.findById(userId).get());
         userRepository.deleteById(userId);
-        return "Пользователь ID" + userId + " удален";
+        return userDto;
     }
 
     public void checkUser(long userId) {

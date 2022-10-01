@@ -3,18 +3,18 @@ package ru.practicum.server.item.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.server.exeption.ObjectNotFoundException;
+import ru.practicum.server.item.dto.*;
+import ru.practicum.server.item.repository.CommentRepository;
+import ru.practicum.server.item.repository.ItemRepository;
 import ru.practicum.server.booking.Booking;
 import ru.practicum.server.booking.Status;
 import ru.practicum.server.booking.dto.BookingResponseDto;
 import ru.practicum.server.booking.repository.BookingRepository;
 import ru.practicum.server.exeption.BadRequestException;
-import ru.practicum.server.exeption.ObjectNotFoundException;
-import ru.practicum.server.item.dto.*;
 import ru.practicum.server.item.mapper.ItemMapper;
 import ru.practicum.server.item.model.Comment;
 import ru.practicum.server.item.model.Item;
-import ru.practicum.server.item.repository.CommentRepository;
-import ru.practicum.server.item.repository.ItemRepository;
 import ru.practicum.server.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -70,11 +70,12 @@ public class ItemServiceImp implements ItemService {
     }
 
     @Override
-    public String deleteItem(long itemId, long userId) {
+    public ItemDto deleteItem(long itemId, long userId) {
         checkItem(itemId);
         checkItemByUser(itemId, userId);
+        ItemDto itemDto = toItemDto(itemRepository.findById(itemId).get());
         itemRepository.deleteById(itemId);
-        return "Объект ID: " + itemId + ", удален";
+        return itemDto;
     }
 
     @Override

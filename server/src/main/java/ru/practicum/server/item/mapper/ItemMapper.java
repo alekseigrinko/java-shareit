@@ -1,12 +1,12 @@
 package ru.practicum.server.item.mapper;
 
+import ru.practicum.server.item.model.Item;
 import ru.practicum.server.booking.dto.BookingResponseDto;
 import ru.practicum.server.booking.dto.BookingResponseDtoForItem;
 import ru.practicum.server.item.dto.CommentResponseDtoForItem;
 import ru.practicum.server.item.dto.ItemDto;
 import ru.practicum.server.item.dto.ItemResponseDto;
 import ru.practicum.server.item.dto.ItemResponseDtoWithComment;
-import ru.practicum.server.item.model.Item;
 
 import java.util.List;
 

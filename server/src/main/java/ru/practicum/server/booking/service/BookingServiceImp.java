@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.server.booking.Booking;
+import ru.practicum.server.booking.BookingMapping;
 import ru.practicum.server.booking.State;
 import ru.practicum.server.booking.Status;
 import ru.practicum.server.booking.dto.BookingDto;
@@ -11,17 +12,15 @@ import ru.practicum.server.booking.dto.BookingResponseDto;
 import ru.practicum.server.booking.repository.BookingRepository;
 import ru.practicum.server.exeption.BadRequestException;
 import ru.practicum.server.exeption.ObjectNotFoundException;
+import ru.practicum.server.item.mapper.ItemMapper;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.repository.ItemRepository;
+import ru.practicum.server.user.UserMapper;
 import ru.practicum.server.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static ru.practicum.server.booking.BookingMapping.*;
-import static ru.practicum.server.item.mapper.ItemMapper.toItemDtoForReturnByBooking;
-import static ru.practicum.server.user.UserMapper.toUserDtoForReturnByBooker;
 
 @Service
 @Slf4j
@@ -52,12 +51,12 @@ public class BookingServiceImp implements BookingService {
         checkData(bookingDto.getStart(), bookingDto.getEnd());
         bookingDto.setStatus(Status.WAITING);
         bookingDto.setBookerId(userId);
-        BookingResponseDto.UserResponseDtoForBooker user = toUserDtoForReturnByBooker(userRepository.findById(itemRepository
+        BookingResponseDto.UserResponseDtoForBooker user = UserMapper.toUserDtoForReturnByBooker(userRepository.findById(itemRepository
                 .findById(bookingDto.getItemId()).get().getOwner()).get());
-        BookingResponseDto.UserResponseDtoForBooker booker = toUserDtoForReturnByBooker(userRepository.findById(userId).get());
+        BookingResponseDto.UserResponseDtoForBooker booker = UserMapper.toUserDtoForReturnByBooker(userRepository.findById(userId).get());
         log.debug("Бронирование создано и ожидает подтверждение");
-        return toBookingDtoForReturn(bookingRepository.save(toBooking(bookingDto)),
-                toItemDtoForReturnByBooking(itemRepository.findById(bookingDto.getItemId()).get(),user),
+        return BookingMapping.toBookingDtoForReturn(bookingRepository.save(BookingMapping.toBooking(bookingDto)),
+                ItemMapper.toItemDtoForReturnByBooking(itemRepository.findById(bookingDto.getItemId()).get(),user),
                 booker);
     }
 
@@ -75,10 +74,10 @@ public class BookingServiceImp implements BookingService {
             booking.setStatus(Status.REJECTED);
         }
         log.debug("Статус бронирования изменен");
-        BookingResponseDto.UserResponseDtoForBooker user = toUserDtoForReturnByBooker(userRepository.findById(userId).get());
-        BookingResponseDto.UserResponseDtoForBooker booker = toUserDtoForReturnByBooker(userRepository.findById(booking.getBookerId()).get());
-        return toBookingDtoForReturn(bookingRepository.save(booking),
-                toItemDtoForReturnByBooking(itemRepository.findById(booking.getItemId()).get(), user),
+        BookingResponseDto.UserResponseDtoForBooker user = UserMapper.toUserDtoForReturnByBooker(userRepository.findById(userId).get());
+        BookingResponseDto.UserResponseDtoForBooker booker = UserMapper.toUserDtoForReturnByBooker(userRepository.findById(booking.getBookerId()).get());
+        return BookingMapping.toBookingDtoForReturn(bookingRepository.save(booking),
+                ItemMapper.toItemDtoForReturnByBooking(itemRepository.findById(booking.getItemId()).get(), user),
                 booker);
     }
 
@@ -86,11 +85,11 @@ public class BookingServiceImp implements BookingService {
     public BookingResponseDto getBooking(long userId, long bookingId) {
         checkUserForBooking(userId, bookingId);
         Booking booking = bookingRepository.findById(bookingId).get();
-        BookingResponseDto.UserResponseDtoForBooker user = toUserDtoForReturnByBooker(userRepository.findById(itemRepository
+        BookingResponseDto.UserResponseDtoForBooker user = UserMapper.toUserDtoForReturnByBooker(userRepository.findById(itemRepository
                 .findById(booking.getItemId()).get().getOwner()).get());
-        BookingResponseDto.UserResponseDtoForBooker booker = toUserDtoForReturnByBooker(userRepository.findById(booking.getBookerId()).get());
+        BookingResponseDto.UserResponseDtoForBooker booker = UserMapper.toUserDtoForReturnByBooker(userRepository.findById(booking.getBookerId()).get());
         log.debug("Предоставлена информация по бронированию ID: " + bookingId);
-        return toBookingDtoForReturn(booking, toItemDtoForReturnByBooking(itemRepository.findById(booking.getItemId()).get(), user),
+        return BookingMapping.toBookingDtoForReturn(booking, ItemMapper.toItemDtoForReturnByBooking(itemRepository.findById(booking.getItemId()).get(), user),
                 booker);
     }
 
@@ -203,10 +202,10 @@ public class BookingServiceImp implements BookingService {
     private List<BookingResponseDto> bookingListToDto(List<Booking> bookingList) {
         List<BookingResponseDto> bookingDtoList = new ArrayList<>();
         for (Booking booking : bookingList) {
-            BookingResponseDto.UserResponseDtoForBooker user = toUserDtoForReturnByBooker(userRepository.findById(itemRepository
+            BookingResponseDto.UserResponseDtoForBooker user = UserMapper.toUserDtoForReturnByBooker(userRepository.findById(itemRepository
                     .findById(booking.getItemId()).get().getOwner()).get());
-            BookingResponseDto.UserResponseDtoForBooker booker = toUserDtoForReturnByBooker(userRepository.findById(booking.getBookerId()).get());
-            bookingDtoList.add(toBookingDtoForReturn(booking, toItemDtoForReturnByBooking(itemRepository.findById(booking.getItemId()).get(),
+            BookingResponseDto.UserResponseDtoForBooker booker = UserMapper.toUserDtoForReturnByBooker(userRepository.findById(booking.getBookerId()).get());
+            bookingDtoList.add(BookingMapping.toBookingDtoForReturn(booking, ItemMapper.toItemDtoForReturnByBooking(itemRepository.findById(booking.getItemId()).get(),
                     user), booker));
         }
         return bookingDtoList;

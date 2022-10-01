@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import ru.practicum.server.exeption.ObjectNotFoundException;
+import ru.practicum.server.item.repository.ItemRepository;
 import ru.practicum.server.booking.Booking;
 import ru.practicum.server.booking.State;
 import ru.practicum.server.booking.Status;
@@ -12,9 +14,7 @@ import ru.practicum.server.booking.dto.BookingDto;
 import ru.practicum.server.booking.dto.BookingResponseDto;
 import ru.practicum.server.booking.repository.BookingRepository;
 import ru.practicum.server.exeption.BadRequestException;
-import ru.practicum.server.exeption.ObjectNotFoundException;
 import ru.practicum.server.item.model.Item;
-import ru.practicum.server.item.repository.ItemRepository;
 import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.repository.UserRepository;
 

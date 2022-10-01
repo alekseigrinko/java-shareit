@@ -100,7 +100,7 @@ class ItemControllerTest {
     @Test
     void deleteItem() throws Exception {
         long pathVariable = 1;
-        when(itemService.deleteItem(anyLong(), anyLong())).thenReturn(" ");
+        when(itemService.deleteItem(anyLong(), anyLong())).thenReturn(itemDto);
 
         mockMvc.perform(delete("/items/" + pathVariable)
                         .content(mapper.writeValueAsString(" "))

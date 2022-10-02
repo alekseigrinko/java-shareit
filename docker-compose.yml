@@ -40,3 +40,5 @@ services:
       - POSTGRES_USER=shareit
       - POSTGRES_PASSWORD=shareit
       - POSTGRES_HOST_AUTH_METHOD=trust
+      - DB_HOST=db
+      - DB_PORT=5432

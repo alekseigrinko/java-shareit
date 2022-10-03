@@ -112,10 +112,10 @@ public class BookingServiceImp implements BookingService {
                 bookingList = bookingRepository.getAllBookingFuture(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case WAITING:
-                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.WAITING, pageRequest).toList();
+                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.WAITING.name(), pageRequest).toList();
                 break;
             case REJECTED:
-                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.REJECTED, pageRequest).toList();
+                bookingList = bookingRepository.getAllBookingByStatus(bookerId, Status.REJECTED.name(), pageRequest).toList();
                 break;
             default:
                 log.warn("Не корректный параметр поиска");

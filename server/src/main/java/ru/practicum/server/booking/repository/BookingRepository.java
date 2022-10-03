@@ -32,7 +32,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b " +
             " where b.bookerId = ?1 and b.status = ?2" +
             " order by b.start desc ")
-    Page<Booking> getAllBookingByStatus(long bookerId, Status status, Pageable pageable);
+    Page<Booking> getAllBookingByStatus(long bookerId, String status, Pageable pageable);
 
     @Query("select b from Booking b " +
             "inner join Item i on b.itemId = i.id" +

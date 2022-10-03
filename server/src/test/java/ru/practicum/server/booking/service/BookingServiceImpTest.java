@@ -184,7 +184,7 @@ class BookingServiceImpTest {
         booking3.setStatus(Status.WAITING);
         bookingList.add(booking3);
 
-        when(bookingRepository.getAllBookingByStatus(anyLong(), any(String.class), any(PageRequest.class)))
+        when(bookingRepository.getAllBookingByStatus(anyLong(), any(Status.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl(bookingList));
 
         bookingDtoTestList = bookingService.getAllBookingByBooker(user.getId(),State.WAITING, pageRequest);
@@ -197,7 +197,7 @@ class BookingServiceImpTest {
         booking.setStatus(Status.REJECTED);
         bookingList.add(booking);
 
-        when(bookingRepository.getAllBookingByStatus(anyLong(), any(String.class), any(PageRequest.class)))
+        when(bookingRepository.getAllBookingByStatus(anyLong(), any(Status.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl(bookingList));
 
         bookingDtoTestList = bookingService.getAllBookingByBooker(user.getId(),State.REJECTED, pageRequest);

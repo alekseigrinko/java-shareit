@@ -107,7 +107,7 @@ class BookingRepositoryTest {
     @Test
     void getAllBookingByStatus() {
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("start").descending());
-        Page<Booking> bookings = bookingRepository.getAllBookingByStatus(3L, Status.APPROVED.name(), pageRequest);
+        Page<Booking> bookings = bookingRepository.getAllBookingByStatus(3L, Status.APPROVED, pageRequest);
         assertEquals(2, bookings.getContent().size());
         assertEquals(1, bookings.getContent().get(0).getItemId());
         assertEquals(2, bookings.getContent().get(1).getId());
